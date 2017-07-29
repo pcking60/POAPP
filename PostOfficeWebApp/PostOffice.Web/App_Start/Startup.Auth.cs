@@ -117,10 +117,14 @@ namespace PostOffice.Web.App_Start
                     identity.AddClaim(new Claim("fullName", user.FullName));
                     identity.AddClaim(new Claim("userId", user.Id));
                     identity.AddClaim(new Claim("permissions", JsonConvert.SerializeObject(listGroup)));
+                    identity.AddClaim(new Claim("createdDate", user.CreatedDate.ToString()));
+                    identity.AddClaim(new Claim("createdBy", user.CreatedBy.ToString()));
                     var props = new AuthenticationProperties(new Dictionary<string, string> {
                         { "fullName", user.FullName },
                         { "userId", user.Id },
-                        {"permissions",JsonConvert.SerializeObject(listGroup)}
+                        { "permissions",JsonConvert.SerializeObject(listGroup)},
+                        { "createdDate", user.CreatedDate.ToString()},
+                        { "createdBy", user.CreatedBy}
                     });
                     context.Validated(new AuthenticationTicket(identity, props));
                 }

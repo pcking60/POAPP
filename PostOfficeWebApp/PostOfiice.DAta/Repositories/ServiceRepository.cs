@@ -11,8 +11,10 @@ namespace PostOfiice.DAta.Repositories
         IEnumerable<Service> GetByAlias(string alias);
 
         IEnumerable<Service> GetAllByServiceGroupID(int id);
-    }
 
+        IEnumerable<Service> GetAllByUserId(string userId);
+    }
+    
     public class ServiceRepository : RepositoryBase<Service>, IServiceRepository
     {
         public ServiceRepository(IDbFactory dbFactory) : base(dbFactory)
@@ -49,6 +51,16 @@ namespace PostOfiice.DAta.Repositories
                      where sv.ID == id
                      select s;
             return no;
+        }
+
+        public IEnumerable<Service> GetAllByUserId(string userId)
+        {
+            var q = from ts in DbContext.Transactions
+                    join s in DbContext.Services
+                    on ts.ServiceId equals s.ID
+                    where ts.UserId == userId
+                    select s;
+            return q;
         }
     }
 }

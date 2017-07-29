@@ -96,6 +96,21 @@ namespace PostOffice.Web.Api
             });
         }
 
+        [Route("getallbyuserid/{id}")]
+        [HttpGet]
+        public HttpResponseMessage GetAllByUserId(HttpRequestMessage request, string id)
+        {
+            return CreateHttpResponse(request, () =>
+            {
+                var model = _serviceService.GetAllByUserId(id);
+
+                var responseData = Mapper.Map<IEnumerable<PostOffice.Model.Models.Service>,IEnumerable<ServiceViewModel>>(model);
+
+                var response = request.CreateResponse(HttpStatusCode.OK, responseData);
+                return response;
+            });
+        }
+
         [Route("add")]
         [HttpPost]
         [Authorize(Roles = "AddService")]

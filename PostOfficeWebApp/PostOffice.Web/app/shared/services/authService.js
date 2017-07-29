@@ -10,7 +10,10 @@ angular.module('postoffice.common')
             fullName: "",
             roles: [],
             isAdmin: false,
-            isManager: false
+            isManager: false,
+            createdDate: '',
+            createdBy: ''
+
         };        
 
 
@@ -43,11 +46,14 @@ angular.module('postoffice.common')
                 _authentication.isAuth = true;
                 _authentication.userName = loginData.userName;                
                 _authentication.fullName = response.data.fullName;
+                _authentication.createdBy = response.data.createdBy;
+                var cd = response.data.createdDate;
+                _authentication.createdDate = new Date(cd);
                 deferred.resolve(response);
 
             }).catch(function (err, status) {
                 _logOut();
-                notificationService.displayError("Đăng nhập không đúng.");
+                notificationService.displayError("Sai mã nhân viên or mật khẩu!");
                 deferred.reject(err);
             });
 

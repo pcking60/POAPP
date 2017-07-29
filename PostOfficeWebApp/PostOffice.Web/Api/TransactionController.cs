@@ -48,7 +48,7 @@ namespace PostOffice.Web.Api
 
         [Route("stattistic")]
         [HttpGet]
-        public HttpResponseMessage GetAllByTime(HttpRequestMessage request, DateTime fromDate, DateTime toDate, string userId, int serviceId)
+        public HttpResponseMessage GetAllByTime(HttpRequestMessage request, DateTime fromDate, DateTime toDate, int districtId, int posId, string userId, int serviceId)
         {
             return CreateHttpResponse(request, () =>
             {
@@ -57,6 +57,7 @@ namespace PostOffice.Web.Api
                 foreach (var item in responseData)
                 {
                     item.VAT = _serviceService.GetById(item.ServiceId).VAT;
+                    item.Quantity = Convert.ToInt32(_transactionDetailService.GetAllByCondition("Sản lượng", item.ID).Money);
                     item.ServiceName = _serviceService.GetById(item.ServiceId).Name;
                     item.TotalMoney = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
                     item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
@@ -90,6 +91,7 @@ namespace PostOffice.Web.Api
                 foreach (var item in responseData)
                 {
                     item.ServiceName = _serviceService.GetById(item.ServiceId).Name;
+                    item.Quantity = Convert.ToInt32(_transactionDetailService.GetAllByCondition("Sản lượng", item.ID).Money);
                     item.TotalMoney = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
                     item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
                 }

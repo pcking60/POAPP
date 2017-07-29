@@ -10,6 +10,7 @@ namespace PostOfiice.DAta.Repositories
     public interface IPORepository : IRepository<PO>
     {
         IEnumerable<PO> GetAllPOByDistrictId(int districtId);
+        PO GetPOByCurrentUser(string userName);
     }
 
     public class PORepository : RepositoryBase<PO>, IPORepository
@@ -48,6 +49,16 @@ namespace PostOfiice.DAta.Repositories
                      where d.ID == districtId
                      select p;
             return po;
+        }
+
+        public PO GetPOByCurrentUser(string userName)
+        {
+            var po = from p in DbContext.PostOffices
+                     join u in DbContext.Users
+                     on p.ID equals u.POID
+                     where u.UserName == userName
+                     select p;
+            return po.FirstOrDefault();
         }
     }
 }

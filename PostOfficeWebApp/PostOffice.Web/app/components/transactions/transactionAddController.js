@@ -6,8 +6,7 @@
             Status: true,
             IsCash: true,
             Users: null,
-            Service: null,
-            Quantity: null,
+            Service: null,            
             TransactionDate: null,
             UserId: null,
             Properties: [],
@@ -93,13 +92,20 @@
 
         
         function getListUser() {
-            apiService.get('/api/applicationUser/getuserbypoid',
+            apiService.get('/api/po/getbycurrentuser',
                 null,
                 function (response) {
-                    $scope.transaction.Users = response.data;
-                }, function (response) {
-                    notificationService.displayError('Không tải được danh sách nhân viên.');
-                });
+                    apiService.get('/api/applicationUser/getuserbypoid/' + response.data.ID,
+                        null,
+                        function (response) {
+                            $scope.transaction.Users = response.data;
+                        }, function (response) {
+                            notificationService.displayError('Không tải được danh sách nhân viên.');
+                        });
+                },
+                function (response) {
+                    notificationService.displayError('Không tải được thông tin nhân viên.');
+                });          
         }
 
         loadServiceDetail();

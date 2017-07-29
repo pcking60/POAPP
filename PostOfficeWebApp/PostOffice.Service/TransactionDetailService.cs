@@ -32,6 +32,7 @@ namespace PostOffice.Service
         decimal? GetTotalEarnMoneyByUsername(string userName);
 
         IEnumerable<TransactionDetail> GetAllByCondition(string condition);
+        TransactionDetail GetAllByCondition(string condition, int transactionId);
 
         void Save();
     }
@@ -114,8 +115,8 @@ namespace PostOffice.Service
         {
             //int? quantity = _transactionRepository.GetSingleByID(id).Quantity;
             //decimal? totalMoney = quantity * _transactionDetailRepository.GetMulti(x => x.TransactionId == id).Sum(x => x.Money);
-            string condition = "Sản lượng";
-            var listTransactionDetails = _transactionDetailRepository.GetAllByCondition(condition, id);
+            //string condition = "Sản lượng";
+            var listTransactionDetails = _transactionDetailRepository.GetAllByTransactionId(id);
             int count = listTransactionDetails.Count();
             decimal? sum = 0;
             foreach (var item in listTransactionDetails)
@@ -152,17 +153,20 @@ namespace PostOffice.Service
         public decimal? GetTotalEarnMoneyByUsername(string userName)
         {
             decimal? earnTotal = 0;
+            var currentDate = DateTime.Now;
+            var firstDateOfMonth = new DateTime(currentDate.Year, currentDate.Month, 1);
+            var lastDateOfMonth = firstDateOfMonth.AddMonths(1).AddDays(-1);
             string userId = _userRepository.getByUserName(userName).Id;
-            var listTransactions = _transactionRepository.GetMulti(x => x.UserId == userId && x.Status == true).ToList();
+            var listTransactions = _transactionRepository.GetMulti(x => x.UserId == userId && (x.TransactionDate>=firstDateOfMonth && x.TransactionDate<=lastDateOfMonth) && x.Status == true).ToList();
             foreach (var item in listTransactions)
             {
                 var listTransactionDetail = _transactionDetailRepository.GetMulti(x => x.TransactionId == item.ID).ToList();
+                var vat = _serviceRepository.GetSingleByID(item.ServiceId).VAT;
                 foreach (var item1 in listTransactionDetail)
                 {
                     decimal? percent = _propertyServiceRepository.GetSingleByID(item1.PropertyServiceId).Percent;
-                    earnTotal = earnTotal + percent * item1.Money;
-                }
-                int? quantity = _transactionRepository.GetSingleByID(item.ID).Quantity;
+                    earnTotal = (earnTotal + percent * item1.Money)/ decimal.Parse(vat.ToString());
+                }                
             }
             return earnTotal;
         }
@@ -170,6 +174,11 @@ namespace PostOffice.Service
         public IEnumerable<TransactionDetail> GetAllByCondition(string condition)
         {
             return _transactionDetailRepository.GetAllByCondition(condition);
+        }
+
+        public TransactionDetail GetAllByCondition(string condition, int transactionId)
+        {
+            return _transactionDetailRepository.GetAllByCondition(condition, transactionId);
         }
     }
 }

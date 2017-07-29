@@ -196,8 +196,8 @@ namespace PostOffice.Common
                     ws.Cells[noRow + 9, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                     ws.Row(noRow + 9).Style.Font.Bold = true;
                     ws.Cells[noRow + 9, 3].Formula = "sum(c9:c" + (noRow + 8) + ")";
-                    ws.Cells[noRow + 9, 4].Formula = "sum(d9:c" + (noRow + 8) + ")";
-                    ws.Cells[noRow + 9, 5].Formula = "sum(e9:c" + (noRow + 8) + ")";
+                    ws.Cells[noRow + 9, 4].Formula = "sum(d9:d" + (noRow + 8) + ")";
+                    ws.Cells[noRow + 9, 5].Formula = "sum(e9:e" + (noRow + 8) + ")";
 
                     //part 2
                     ws.Cells[noRow + 11, 2].Value = "Tiền giữ hộ";

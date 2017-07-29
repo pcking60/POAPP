@@ -2,6 +2,7 @@
 using PostOfiice.DAta.Infrastructure;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace PostOfiice.DAta.Repositories
 {
@@ -9,7 +10,9 @@ namespace PostOfiice.DAta.Repositories
     {
         IEnumerable<TransactionDetail> GetAllByCondition(string condition);
 
-        IEnumerable<TransactionDetail> GetAllByCondition(string condition, int transactionId);
+        IEnumerable<TransactionDetail> GetAllByTransactionId(int transactionId);
+
+        TransactionDetail GetAllByCondition(string condition, int transactionId);
     }
 
     public class TransactionDetailRepository : RepositoryBase<TransactionDetail>, ITransactionDetailRepository
@@ -29,14 +32,19 @@ namespace PostOfiice.DAta.Repositories
             return query;
         }
 
-        public IEnumerable<TransactionDetail> GetAllByCondition(string condition, int transactionId)
+        public TransactionDetail GetAllByCondition(string condition, int transactionId)
         {
-            condition = "Sản lượng";
             var query = from ps in DbContext.PropertyServices
                         join td in DbContext.TransactionDetails
                         on ps.ID equals td.PropertyServiceId
-                        where ps.Name != condition && td.TransactionId == transactionId
+                        where ps.Name == condition && td.TransactionId == transactionId
                         select td;
+            return query.FirstOrDefault();
+        }
+
+        public IEnumerable<TransactionDetail> GetAllByTransactionId(int transactionId)
+        {
+            var query = DbContext.TransactionDetails.Where(x => x.TransactionId == transactionId).ToList();
             return query;
         }
     }

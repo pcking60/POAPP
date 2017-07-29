@@ -20,6 +20,7 @@ namespace PostOffice.Service
 
         IEnumerable<PO> Getall();
         IEnumerable<PO> GetAllPOByDistrictId(int districtID);
+        PO GetPOByCurrentUser(string userName);
     }
 
     public class POService : IPOService
@@ -56,6 +57,11 @@ namespace PostOffice.Service
         public PO GetByID(int id)
         {
             return _poRepository.GetSingleByID(id);
+        }
+
+        public PO GetPOByCurrentUser(string userName)
+        {
+            return _poRepository.GetPOByCurrentUser(userName);
         }
 
         public void Save()

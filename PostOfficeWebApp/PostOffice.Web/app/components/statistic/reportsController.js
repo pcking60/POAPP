@@ -1,9 +1,9 @@
 ﻿(function (app) {
     app.controller('reportsController', reportsController);
 
-    reportsController.$inject = ['$scope', 'apiService', 'notificationService', '$filter', 'authService', '$stateParams'];
+    reportsController.$inject = ['$scope', 'apiService', 'notificationService', '$filter', 'authService', '$stateParams', '$injector'];
 
-    function reportsController($scope, apiService, notificationService, $filter, authService, $stateParams) {
+    function reportsController($scope, apiService, notificationService, $filter, authService, $stateParams, $injector) {
         $scope.report = {
             districts: [],
             units: [],
@@ -88,7 +88,30 @@
             )
         }
 
-        getDistrict();        
+        //check role 
+        $scope.isManager = authService.haveRole('Manager');
+        $scope.isAdmin = authService.haveRole('Administrator');
+        if (!$scope.isAdmin && !$scope.isManager) {
+            var stateService = $injector.get('$state');
+            stateService.go('user_dashboard');
+        }
+        else {
+            if (!$scope.isAdmin) {
+                $stateParams.id = authService.authentication.userName;
+                apiService.get('/api/applicationUser/userinfo',
+                    null,
+                    function (response) {
+                        $stateParams.id = response.data.POID;
+                        getUnit();
+                    },
+                    function (response) {
+                        notificationService.displayError('Không tải được danh sách bưu cục.');
+                    });
+            }
+            else {
+                getDistrict();
+            }
+        }
     }
 
 })(angular.module('postoffice.statistics'));

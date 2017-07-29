@@ -30,29 +30,23 @@
               <li class="user-header">
                 <img src="./Assets/admin/img/user2-160x160.jpg" class="img-circle" alt="User Image">
                 <p>
-                 {{authentication.userName}}
-                  <small>Member since Nov. 2012</small>
+                 {{authentication.fullName}}
+                  <small>Tham gia từ {{authentication.createdDate | date: 'dd/MM/yyyy'}}</small>
                 </p>
               </li>
               <!-- Menu Body -->
               <li class="user-body">
-                <div class="col-xs-4 text-center">
-                  <a href="javascript:void(0);">Followers</a>
-                </div>
-                <div class="col-xs-4 text-center">
-                  <a href="javascript:void(0);">Sales</a>
-                </div>
-                <div class="col-xs-4 text-center">
-                  <a href="javascript:void(0);">Friends</a>
-                </div>
+                <div class="col-xs-12 text-center">
+                  <a ui-sref="transactions" class="btn btn-success" style="color: white !important">Danh sách giao dịch </a>
+                </div>                
               </li>
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
-                  <a ui-sref="user_profile" class="btn btn-default btn-flat">Profile</a>
+                  <a ui-sref="user_profile" class="btn btn-info">Trang cá nhân</a>
                 </div>
                 <div class="pull-right">
-                  <a href="#" ng-click="logOut()" class="btn btn-default btn-flat">Thoát</a>
+                  <a href="#" ng-click="logOut()" class="btn btn-warning">Đăng xuất</a>
                 </div>
               </li>
             </ul>

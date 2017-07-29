@@ -115,6 +115,21 @@ namespace PostOffice.Web.Api
             });
         }
 
+        [Route("getbycurrentuser")]
+        [HttpGet]
+        public HttpResponseMessage GetByCurrentUser(HttpRequestMessage request)
+        {
+            return CreateHttpResponse(request, () =>
+            {
+                var model = _poService.GetPOByCurrentUser(User.Identity.Name);
+
+                var responseData = Mapper.Map<PO, POViewModel>(model);
+
+                var response = request.CreateResponse(HttpStatusCode.OK, responseData);
+                return response;
+            });
+        }
+
         [Route("getbydistrictid/{id:int}")]
         [HttpGet]
         public HttpResponseMessage GetByDistrictId(HttpRequestMessage request, int id)

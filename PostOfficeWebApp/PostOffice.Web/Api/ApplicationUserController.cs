@@ -115,14 +115,13 @@ namespace PostOffice.Web.Api
             });
         }
 
-        [Route("getuserbypoid")]
+        [Route("getuserbypoid/{id}")]
         [HttpGet]
-        public HttpResponseMessage GetAllParentID(HttpRequestMessage request)
+        public HttpResponseMessage GetAllParentID(HttpRequestMessage request, int id)
         {
             return CreateHttpResponse(request, () =>
-            {//ham nay la sao ban
-                var user = _userService.getByUserName(User.Identity.Name);
-                var model = _userService.GetAllByPOID(user.POID);
+            {                
+                var model = _userService.GetAllByPOID(id);
                 var responseData = Mapper.Map<IEnumerable<ApplicationUser>, IEnumerable<ApplicationUserViewModel>>(model);
 
                 var response = request.CreateResponse(HttpStatusCode.OK, responseData);
@@ -188,6 +187,8 @@ namespace PostOffice.Web.Api
             if (ModelState.IsValid)
             {
                 var newAppUser = new ApplicationUser();
+                newAppUser.CreatedDate = DateTime.Now;
+                newAppUser.CreatedBy = User.Identity.Name;
                 newAppUser.UpdateUser(applicationUserViewModel);
                 try
                 {

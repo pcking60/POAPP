@@ -21,6 +21,8 @@ namespace PostOffice.Service
 
         IEnumerable<Model.Models.Service> GetAllByServiceGroupID(int id);
 
+        IEnumerable<Model.Models.Service> GetAllByUserId(string userId);
+
         void Save();
     }
 
@@ -70,6 +72,11 @@ namespace PostOffice.Service
         public IEnumerable<Model.Models.Service> GetAllByServiceGroupID(int id)
         {
             return _serviceRepository.GetAllByServiceGroupID(id);
+        }
+
+        public IEnumerable<Model.Models.Service> GetAllByUserId(string userId)
+        {
+            return _serviceRepository.GetAllByUserId(userId);
         }
 
         public Model.Models.Service GetById(int id)
