@@ -58,8 +58,15 @@ namespace PostOffice.Web.Api
                 {
                     item.VAT = _serviceService.GetById(item.ServiceId).VAT;
                     item.Quantity = Convert.ToInt32(_transactionDetailService.GetAllByCondition("Sản lượng", item.ID).Money);
-                    item.ServiceName = _serviceService.GetById(item.ServiceId).Name;
-                    item.TotalMoney = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                    item.ServiceName = _serviceService.GetById(item.ServiceId).Name;                    
+                    if (!item.IsCash)
+                    {
+                        item.TotalDebt = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                    }
+                    else
+                    {
+                        item.TotalCash = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                    }
                     item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
                 }
                 var response = request.CreateResponse(HttpStatusCode.OK, responseData);
@@ -92,7 +99,15 @@ namespace PostOffice.Web.Api
                 {
                     item.ServiceName = _serviceService.GetById(item.ServiceId).Name;
                     item.Quantity = Convert.ToInt32(_transactionDetailService.GetAllByCondition("Sản lượng", item.ID).Money);
-                    item.TotalMoney = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                    if (!item.IsCash)
+                    {
+                        item.TotalDebt = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                    }
+                    else
+                    {
+                        item.TotalCash = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                    }
+                    item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
                     item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
                 }
 
@@ -144,7 +159,14 @@ namespace PostOffice.Web.Api
             }
             else
             {
+                var dbTransaction = _transactionService.GetById(transactionVM.ID);
+
                 var currentDate = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+                if (transactionVM.TransactionDate == null)
+                {
+                    transactionVM.TransactionDate = dbTransaction.TransactionDate;
+                }
 
                 var transactionDate = transactionVM.TransactionDate.Ticks / TimeSpan.TicksPerMillisecond;
 
@@ -156,7 +178,7 @@ namespace PostOffice.Web.Api
                 }
                 else
                 {
-                    var dbTransaction = _transactionService.GetById(transactionVM.ID);
+                    
                     ICollection<TransactionDetail> transactionDetails = transactionVM.TransactionDetails;
                     var responseTransactionDetail = Mapper.Map<IEnumerable<TransactionDetail>, IEnumerable<TransactionDetailViewModel>>(transactionDetails);
                     transactionVM.UpdatedBy = User.Identity.Name;

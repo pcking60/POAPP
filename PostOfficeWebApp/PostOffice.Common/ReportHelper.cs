@@ -121,7 +121,7 @@ namespace PostOffice.Common
                     ws.Cells["A1:E1"].Merge = true;
                     ws.Cells["A1:E1"].Value = "TỔNG CÔNG TY BƯU ĐIỆN VIỆT NAM \n BƯU ĐIỆN TỈNH SÓC TRĂNG";
                     ws.Row(1).Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                    ws.Row(1).Height = 35;
+                    ws.Row(1).Height = 45;
                     ws.Row(1).Style.Font.Bold = true;
                     ws.Row(1).Style.Font.Size = 15;
 

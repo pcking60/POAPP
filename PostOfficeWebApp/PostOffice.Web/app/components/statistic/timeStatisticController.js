@@ -15,7 +15,8 @@
             userId: '',
             serviceId: 0,
             totalQuantity: 0,
-            totalMoney: 0,
+            totalCash: 0,
+            totalDebt: 0,
             totalEarn: 0,
             totalVat: 0
         };
@@ -124,14 +125,16 @@
                 function (response) {
                     $scope.statisticResult = response.data;
                     $scope.report.totalQuantity = 0;
-                    $scope.report.totalMoney = 0;
+                    $scope.report.totalCash = 0;
+                    $scope.report.totalDebt = 0;
                     $scope.report.totalEarn = 0;
                     angular.forEach($scope.statisticResult, function (item) {
                         if (item.Status == true) {
                             $scope.report.totalQuantity += item.Quantity;
-                            $scope.report.totalMoney += item.TotalMoney;
+                            $scope.report.totalCash += item.TotalCash;
+                            $scope.report.totalDebt += item.TotalDebt;
                             $scope.report.totalEarn += item.EarnMoney;
-                            $scope.report.totalVat += (item.TotalMoney - item.TotalMoney/item.VAT);
+                            $scope.report.totalVat += (item.TotalMoney * item.VAT / 100);
                         }                        
                     })
                     $scope.result = true;

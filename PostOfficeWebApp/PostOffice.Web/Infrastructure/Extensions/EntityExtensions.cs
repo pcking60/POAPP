@@ -190,6 +190,7 @@ namespace PostOffice.Web.Infrastructure.Extensions
             transaction.UserId = vm.UserId;
             //transaction.TransactionDetails = vm.TransactionDetails;
             transaction.Quantity = vm.Quantity;
+            transaction.IsCash = vm.IsCash;
         }
 
         public static void UpdateTransactionDetail(this TransactionDetail transactionDetail, TransactionDetailViewModel vm)

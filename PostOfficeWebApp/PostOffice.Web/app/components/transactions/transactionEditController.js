@@ -2,8 +2,7 @@
     app.controller('transactionEditController', transactionEditController);
     transactionEditController.$inject = ['$scope', 'apiService', 'notificationService', '$state', '$stateParams', 'commonService', '$timeout'];
     function transactionEditController($scope, apiService, notificationService, $state, $stateParams, commonService, $timeout) {
-        $scope.transaction = {
-            Status: true,
+        $scope.transaction = {           
             TransactionDetails: [],
             Service: null
         }
@@ -45,7 +44,14 @@
         //    });
         //}
         function EditTransaction() {
-            $scope.transaction.TransactionDate = $("#datetimepicker1").find("input").val();
+           
+            if($("#datetimepicker1").find("input").val()==null || $("#datetimepicker1").find("input").val()=="")
+            {  
+            }
+            else
+            {
+                $scope.transaction.TransactionDate = $("#datetimepicker1").find("input").val();
+            }
             apiService.put('/api/transactions/update', $scope.transaction,
                 function (result) {
                     notificationService.displaySuccess('Cập nhật thành công');

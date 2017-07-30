@@ -17,8 +17,14 @@ namespace PostOffice.Web.Models
 
         public decimal? TotalMoney { get; set; }
 
+        public decimal? TotalCash { get; set; }
+
+        public decimal? TotalDebt { get; set; }
+
         public decimal? EarnMoney { get; set; }
         public float? VAT { get; set; }
+
+        public bool IsCash { get; set; }
         [Required]
         public DateTimeOffset TransactionDate { get; set; }
 

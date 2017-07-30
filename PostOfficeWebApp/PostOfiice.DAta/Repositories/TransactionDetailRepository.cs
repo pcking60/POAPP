@@ -13,6 +13,7 @@ namespace PostOfiice.DAta.Repositories
         IEnumerable<TransactionDetail> GetAllByTransactionId(int transactionId);
 
         TransactionDetail GetAllByCondition(string condition, int transactionId);
+        decimal? GetTotalMoneyByTransactionId(int id);
     }
 
     public class TransactionDetailRepository : RepositoryBase<TransactionDetail>, ITransactionDetailRepository
@@ -46,6 +47,22 @@ namespace PostOfiice.DAta.Repositories
         {
             var query = DbContext.TransactionDetails.Where(x => x.TransactionId == transactionId).ToList();
             return query;
+        }
+
+        public decimal? GetTotalMoneyByTransactionId(int id)
+        {
+            var condition = "Sản lượng";
+            var listTransactionDetails = from ps in DbContext.PropertyServices
+                                         join td in DbContext.TransactionDetails
+                                         on ps.ID equals td.PropertyServiceId                                      
+                                         where ps.Name != condition && td.TransactionId == id
+                                         select td;
+            decimal? sum = 0;
+            foreach (var item in listTransactionDetails)
+            {
+                sum += DbContext.TransactionDetails.Where(x=>x.ID == item.ID).Sum(x => x.Money);
+            }
+            return sum;
         }
     }
 }

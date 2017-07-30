@@ -21,9 +21,14 @@ namespace PostOffice.Web.Api
         private IStatisticService _statisticService;
         private IDistrictService _districtService;
         private IPOService _poService;
+        private IApplicationUserService _userService;
+        private IServiceService _serviceService;
 
-        public StatisticController(IErrorService errorService, IStatisticService statisticService, IDistrictService districtService, IPOService poService) : base(errorService)
+
+        public StatisticController(IServiceService serviceService, IApplicationUserService userService, IErrorService errorService, IStatisticService statisticService, IDistrictService districtService, IPOService poService) : base(errorService)
         {
+            _serviceService = serviceService;
+            _userService = userService;
             _statisticService = statisticService;
             _districtService = districtService;
             _poService = poService;
@@ -58,8 +63,10 @@ namespace PostOffice.Web.Api
         }
         [HttpGet]
         [Route("rp1")]
-        public async Task<HttpResponseMessage> RP1(HttpRequestMessage request, string fromDate, string toDate, int districtId, int functionId, int unitId)
+        public async Task<HttpResponseMessage> RP1(HttpRequestMessage request, string fromDate, string toDate, int districtId, int functionId, int unitId, string userId, int serviceId)
         {
+            #region Config Export file
+
             string fileName = string.Concat("Money_" + DateTime.Now.ToString("yyyyMMddhhmmsss") + ".xlsx");
             var folderReport = ConfigHelper.GetByKey("ReportFolder");
             string filePath = HttpContext.Current.Server.MapPath(folderReport);
@@ -68,16 +75,28 @@ namespace PostOffice.Web.Api
                 Directory.CreateDirectory(filePath);
             }
             string fullPath = Path.Combine(filePath, fileName);
+
+            #endregion
+
             ReportTemplate vm = new ReportTemplate();
             IEnumerable<RP1Advance> rp1Advance;
+
             try
             {
                 #region customFill Test
+                // Thời gian để xuất dữ liệu
                 vm.FromDate = DateTime.Parse(fromDate);
                 vm.ToDate = DateTime.Parse(toDate);
+
                 District district = new District();
                 PO po = new PO();
+                ApplicationUser user = new ApplicationUser();
+                Model.Models.Service sv = new Model.Models.Service();
+
                 rp1Advance = _statisticService.RP1Advance();
+
+                //check param đầu vào
+
                 if (districtId != 0)
                 {
                     district = _districtService.GetById(districtId);
@@ -86,10 +105,30 @@ namespace PostOffice.Web.Api
                 {
                     po = _poService.GetByID(unitId);
                 }
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    user = _userService.getByUserId(userId);
+                }
+                if (serviceId != 0)
+                {
+                    sv = _serviceService.GetById(serviceId);
+                }
                 switch (functionId)
                 {
                     case 1:
-                        vm.FunctionName = "Bảng kê thu tiền tại đơn vị";
+                        vm.FunctionName = "Bảng kê thu tiền tại bưu cục - tổng hợp";
+                        break;
+                    case 2:
+                        vm.FunctionName = "Bảng kê thu tiền tại bưu cục - chi tiết";
+                        break;
+                    case 3:
+                        vm.FunctionName = "Bảng kê thu tiền theo nhân viên";
+                        break;
+                    case 4:
+                        vm.FunctionName = "Bảng kê thu tiền theo dịch vụ";
+                        break;
+                    case 5:
+                        vm.FunctionName = "Bảng kê thu tiền theo nhân viên và dịch vụ";
                         break;
                     default:
                         vm.FunctionName = "Chức năng khác";
@@ -104,7 +143,14 @@ namespace PostOffice.Web.Api
                 {
                     vm.Unit = po.Name;
                 }
-                
+                if (user != null)
+                {
+                    vm.user = user.FullName;
+                }
+                if (sv != null)
+                {
+                    vm.Service = sv.Name;
+                }
                 vm.CreatedBy = User.Identity.Name;
 
                 #endregion

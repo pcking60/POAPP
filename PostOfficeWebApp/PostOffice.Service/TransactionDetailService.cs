@@ -116,14 +116,14 @@ namespace PostOffice.Service
             //int? quantity = _transactionRepository.GetSingleByID(id).Quantity;
             //decimal? totalMoney = quantity * _transactionDetailRepository.GetMulti(x => x.TransactionId == id).Sum(x => x.Money);
             //string condition = "Sản lượng";
-            var listTransactionDetails = _transactionDetailRepository.GetAllByTransactionId(id);
-            int count = listTransactionDetails.Count();
-            decimal? sum = 0;
-            foreach (var item in listTransactionDetails)
-            {
-                sum += _transactionDetailRepository.GetMulti(x => x.TransactionId == id && x.ID == item.ID).Sum(x => x.Money);
-            }
-            return sum;
+            //var listTransactionDetails = _transactionDetailRepository.GetAllByTransactionId(id);
+            //int count = listTransactionDetails.Count();
+            //decimal? sum = 0;
+            //foreach (var item in listTransactionDetails)
+            //{
+            //    sum += _transactionDetailRepository.GetMulti(x => x.TransactionId == id && x.ID == item.ID).Sum(x => x.Money);
+            //}
+            return _transactionDetailRepository.GetTotalMoneyByTransactionId(id);
         }
 
         public void Save()

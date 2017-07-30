@@ -28,37 +28,43 @@
                             <span ng-show="frmReport.name.$invalid" class="text-danger">Cần nhập thông tin vào đây</span>
                         </div>
                     </div>                    
-                    <div class="form-group" ng-controller="rootController" ng-hide="!isAdmin">
-                        <label for="inputPassword3" class="col-sm-3 control-label">Chọn huyện</label>
+                    <div class="form-group" ng-hide="!isAdmin">
+                        <label for="inputPassword3" class="col-sm-3 control-label">Chọn đơn vị</label>
                         <div class="col-sm-6">
-                            <ui-select them="select2"
-                                    ng-model="report.districtId"                                     
-                                    on-select="onSelectCallback($item, $model)">
-                                        <ui-select-match placeholder="chọn or tìm kiếm huyện nào đó">{{$select.selected.Name}}</ui-select-match>
-                                        <ui-select-choices repeat="item.ID as item in report.districts | filter: $select.search">
-                                            <small>
-                                                {{item.Name | highlight: $select.search}}
-                                            </small>
-                                            <!--<div ng-bind-html="item.Name | highlight: $select.search"></div>-->
-                                        </ui-select-choices>  
-                            </ui-select>
-                            <!--<input type="hidden" name="parentId" ng-model="report.unitId" />-->
+                            <select name="districtId" class="form-control" ng-change="updatePos(report.districtId)" ng-model="report.districtId" ng-options="option.ID as option.Name for option in report.districts">
+                                <option value="">Tất cả</option>
+                            </select>
+                            <input type="hidden" name="districtId" ng-model="report.districtId" />
                         </div>
                     </div>
-                    <div class="form-group" ng-controller="rootController" ng-hide="!isManager && !isAdmin">
+                    <div class="form-group" ng-hide="!isManager && !isAdmin">
                         <label for="inputPassword3" class="col-sm-3 control-label">Chọn bưu cục</label>
                         <div class="col-sm-6">
-                            <ui-select ng-model="report.unitId">
-                                <ui-select-match placeholder="chọn or tìm kiếm huyện nào đó">{{$select.selected.Name}}</ui-select-match>
-                                <ui-select-choices repeat="item.ID as item in report.units | filter: $select.search">
-                                    <small>
-                                        {{item.Name}}
-                                    </small>
-                                </ui-select-choices>
-                            </ui-select>
-                            <!--<input type="hidden" name="parentId" ng-model="report.unitId" />-->
+                            <select name="poId" class="form-control" ng-change="updateUser(report.poId)" ng-model="report.poId" ng-options="option.ID as option.Name for option in report.pos">
+                                <option value="">Tất cả</option>
+                            </select>
+                            <input type="hidden" name="poId" ng-model="report.poId" />
                         </div>
                     </div>
+                    <div class="form-group" ng-if="report.functionId==3 || report.functionId==5">
+                        <label for="inputPassword3" class="col-sm-3 control-label">Chọn nhân viên</label>
+                        <div class="col-sm-6">
+                            <select name="staff" class="form-control" ng-change="updateService(report.userId)" ng-model="report.userId" ng-options="option.Id as option.FullName for option in report.users">
+                                <option value="">Tất cả</option>
+                            </select>
+                            <input type="hidden" name="parentId" ng-model="report.userId" />
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="report.functionId==4 || report.functionId==5">
+                        <label for="inputPassword3" class="col-sm-3 control-label">Chọn dịch vụ </label>
+                        <div class="col-sm-6">
+                            <select name="staff" class="form-control" ng-model="report.serviceId" ng-options="option.ID as option.Name for option in services">
+                                <option value="">Tất cả</option>
+                            </select>
+                            <input type="hidden" name="parentId" ng-model="report.serviceId" />
+                        </div>
+                    </div>
+
                     <div class="col-md-8">
                         <div class="col-sm-8 col-sm-offset-4">
                             <span class="col-sm-4"><button type="submit" class="btn bg-orange btn-flat" ng-disabled="frmReport.$invalid" style="opacity:1">Xuất báo cáo</button></span>
