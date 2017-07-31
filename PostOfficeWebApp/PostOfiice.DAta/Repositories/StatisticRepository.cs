@@ -75,9 +75,7 @@ namespace PostOfiice.DAta.Repositories
 
         public IEnumerable<RP1Advance> RP1Advance()
         {
-            NumberStyles style;
-            style = NumberStyles.AllowDecimalPoint | NumberStyles.AllowThousands |
-            NumberStyles.AllowParentheses;
+            
             var query = ((from td in DbContext.TransactionDetails
                           join t in DbContext.Transactions
                           on td.TransactionId equals t.ID

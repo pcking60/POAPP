@@ -113,6 +113,25 @@ namespace PostOffice.Web.Api
                 {
                     sv = _serviceService.GetById(serviceId);
                 }
+
+                if (district != null)
+                {
+                    vm.District = district.Name;
+                }
+                if (po != null)
+                {
+                    vm.Unit = po.Name;
+                }
+                if (user != null)
+                {
+                    vm.user = user.FullName;
+                }
+                if (sv != null)
+                {
+                    vm.Service = sv.Name;
+                }
+                vm.CreatedBy = User.Identity.Name;
+
                 switch (functionId)
                 {
                     case 1:
@@ -133,25 +152,7 @@ namespace PostOffice.Web.Api
                     default:
                         vm.FunctionName = "Chức năng khác";
                         break; 
-
-                }
-                if (district != null)
-                {
-                    vm.District = district.Name;
-                }
-                if (po != null)
-                {
-                    vm.Unit = po.Name;
-                }
-                if (user != null)
-                {
-                    vm.user = user.FullName;
-                }
-                if (sv != null)
-                {
-                    vm.Service = sv.Name;
-                }
-                vm.CreatedBy = User.Identity.Name;
+                }                
 
                 #endregion
 
