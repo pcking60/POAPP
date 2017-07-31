@@ -65,6 +65,13 @@ namespace PostOffice.Web.Api
         [Route("rp1")]
         public async Task<HttpResponseMessage> RP1(HttpRequestMessage request, string fromDate, string toDate, int districtId, int functionId, int unitId, string userId, int serviceId)
         {
+            //check role
+
+            bool isAdmin = false;
+            bool isManager = false;
+            isAdmin = _userService.CheckRole(User.Identity.Name, "Administrator");
+            isManager = _userService.CheckRole(User.Identity.Name, "Manager");
+
             #region Config Export file
 
             string fileName = string.Concat("Money_" + DateTime.Now.ToString("yyyyMMddhhmmsss") + ".xlsx");
@@ -136,9 +143,33 @@ namespace PostOffice.Web.Api
                 {
                     case 1:
                         vm.FunctionName = "Bảng kê thu tiền tại bưu cục - tổng hợp";
+                       
                         break;
                     case 2:
                         vm.FunctionName = "Bảng kê thu tiền tại bưu cục - chi tiết";
+                        if (isAdmin)
+                        {
+                            if (districtId == 0)
+                            {
+
+                            }
+                            else
+                            {
+                                if (unitId == 0)
+                                {
+
+                                }
+                                else
+                                {
+
+                                }
+                            }
+                        }
+                        else
+                        {
+
+                        }
+                        
                         break;
                     case 3:
                         vm.FunctionName = "Bảng kê thu tiền theo nhân viên";

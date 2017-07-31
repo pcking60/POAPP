@@ -56,6 +56,7 @@
     <Compile Include="ViewModels\ReportTemplate.cs" />
     <Compile Include="ViewModels\RevenueStatisticViewModel.cs" />
     <Compile Include="ViewModels\RP1Advance.cs" />
+    <Compile Include="ViewModels\RP2-1.cs" />
     <Compile Include="ViewModels\statisticReportViewModel.cs" />
     <Compile Include="ViewModels\UnitStatisticViewModel.cs" />
   </ItemGroup>

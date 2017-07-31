@@ -17,6 +17,7 @@ namespace PostOfiice.DAta.Repositories
         IEnumerable<ReportFunction1> ReportFunction1(string fromDate, string toDate, int districtId, int unitId);
         IEnumerable<ReportFunction1> RP1(string fromDate, string toDate, int districtId, int unitId);
         IEnumerable<RP1Advance> RP1Advance();
+        IEnumerable<RP2_1> RP2_1();
     }
 
     public class StatisticRepository : RepositoryBase<UnitStatisticViewModel>, IStatisticRepository
@@ -97,6 +98,33 @@ namespace PostOfiice.DAta.Repositories
          
             return query;
 
+        }
+
+        public IEnumerable<RP2_1> RP2_1()
+        {
+            var query = ((from td in DbContext.TransactionDetails
+                          join t in DbContext.Transactions
+                          on td.TransactionId equals t.ID
+                          join s in DbContext.Services
+                          on t.ServiceId equals s.ID
+                          join sg in DbContext.ServiceGroups
+                          on s.GroupID equals sg.ID
+                          where
+                            sg.MainServiceGroupId==1
+                          group new { s, td } by new
+                          {
+                              s.Name,
+                              s.VAT
+                          } into g
+                          select g).ToList()
+                        .Select(g => new RP2_1
+                        {
+                            Revenue = (g.Sum(p => p.td.Money) / Convert.ToDecimal(g.Key.VAT)),
+                            Tax = (g.Sum(p => p.td.Money) - g.Sum(p => p.td.Money) / Convert.ToDecimal(g.Key.VAT)),
+                            TotalMoney = g.Sum(p => p.td.Money)
+                        })).ToList();
+
+            return query;
         }
     }
 }
