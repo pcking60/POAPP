@@ -1,8 +1,10 @@
-﻿using PostOffice.Common;
+﻿using AutoMapper;
+using PostOffice.Common;
 using PostOffice.Common.ViewModels;
 using PostOffice.Model.Models;
 using PostOffice.Service;
 using PostOffice.Web.Infrastructure.Core;
+using PostOffice.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,10 +25,14 @@ namespace PostOffice.Web.Api
         private IPOService _poService;
         private IApplicationUserService _userService;
         private IServiceService _serviceService;
+        private ITransactionService _trasactionService;
+        private ITransactionDetailService _transactionDetailService;
 
 
-        public StatisticController(IServiceService serviceService, IApplicationUserService userService, IErrorService errorService, IStatisticService statisticService, IDistrictService districtService, IPOService poService) : base(errorService)
+        public StatisticController(ITransactionDetailService transactionDetailService, ITransactionService trasactionService, IServiceService serviceService, IApplicationUserService userService, IErrorService errorService, IStatisticService statisticService, IDistrictService districtService, IPOService poService) : base(errorService)
         {
+            _transactionDetailService = transactionDetailService;
+            _trasactionService = trasactionService;
             _serviceService = serviceService;
             _userService = userService;
             _statisticService = statisticService;
@@ -151,7 +157,39 @@ namespace PostOffice.Web.Api
                         {
                             if (districtId == 0)
                             {
+                                var model = _trasactionService.GetAll(DateTime.Parse(fromDate), DateTime.Parse(toDate));
+                                var responseData = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(model);
+                                foreach (var item in responseData)
+                                {
+                                    item.VAT = _serviceService.GetById(item.ServiceId).VAT;
+                                    item.Quantity = Convert.ToInt32(_transactionDetailService.GetAllByCondition("Sản lượng", item.ID).Money);
+                                    item.ServiceName = _serviceService.GetById(item.ServiceId).Name;
+                                    if (!item.IsCash)
+                                    {
+                                        item.TotalDebt = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                    else
+                                    {
+                                        item.TotalCash = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                    item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
+                                }
+                                var responseDB = Mapper.Map<IEnumerable<TransactionViewModel>, IEnumerable<RP2_1>>(responseData);
+                                foreach (var item in responseDB)
+                                {
 
+                                    if (item.TotalDebt > 0 && item.VAT > 0)
+                                    {
+                                        item.VatOfTotalDebt = item.TotalDebt / Convert.ToDecimal(item.VAT);
+                                    }
+                                    if (item.TotalCash > 0 && item.VAT > 0)
+                                    {
+                                        item.VatOfTotalCash = item.TotalCash / Convert.ToDecimal(item.VAT);
+                                    }
+                                                                   
+                                }
+                                
+                                await ReportHelper.RP1(responseDB.ToList(), fullPath, vm, rp1Advance);
                             }
                             else
                             {
@@ -207,18 +245,18 @@ namespace PostOffice.Web.Api
                 //}
                 #endregion
                 #region Bussiness method 2
-                IEnumerable<ReportFunction1> rp = Enumerable.Empty<ReportFunction1>();
-                rp = _statisticService.RP1(fromDate, toDate, districtId, unitId);
+                //IEnumerable<ReportFunction1> rp = Enumerable.Empty<ReportFunction1>();
+                //rp = _statisticService.RP1(fromDate, toDate, districtId, unitId);
                 #endregion
-                List<ReportFunction1> listData = new List<ReportFunction1>();
-                if (rp!=null)
-                {
-                    listData = rp.ToList();
-                }
+                //List<ReportFunction1> listData = new List<ReportFunction1>();
+                //if (rp!=null)
+                //{
+                //    listData = rp.ToList();
+                //}
                                  
 
-                //test medthod customFill
-                await ReportHelper.RP1(listData, fullPath, vm, rp1Advance);
+                ////test medthod customFill
+                //await ReportHelper.RP1(listData, fullPath, vm, rp1Advance);
 
                 return request.CreateErrorResponse(HttpStatusCode.OK, Path.Combine(folderReport, fileName));
             }

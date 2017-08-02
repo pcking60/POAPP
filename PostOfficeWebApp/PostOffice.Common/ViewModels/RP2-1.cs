@@ -9,12 +9,13 @@ namespace PostOffice.Common.ViewModels
     public class RP2_1
     {
         public int? STT { get; set; }
-        public string Name { get; set; }
-        public int Quantity { get; set; }
-        public decimal? TotalCash { get; set; }
-        public decimal? VatOfTotalTalCash { get; set; }
+        public string ServiceName { get; set; }
+        public int? Quantity { get; set; }
+        public float? VAT { get; set; }
+        public decimal? TotalCash { get; set; }        
+        public decimal? VatOfTotalCash { get; set; }
         public decimal? TotalDebt { get; set; }
         public decimal? VatOfTotalDebt { get; set; }
-        public decimal? TotalEarn { get; set; }
+        public decimal? EarnMoney { get; set; }
     }
 }

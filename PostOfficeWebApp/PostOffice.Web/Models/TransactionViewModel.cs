@@ -23,6 +23,9 @@ namespace PostOffice.Web.Models
 
         public decimal? EarnMoney { get; set; }
         public float? VAT { get; set; }
+        public decimal? VatOfTotalMoney { get; set; }
+        public decimal? VatOfTotalCash { get; set; }
+        public decimal? VatOfTotalDebt { get; set; }
 
         public bool IsCash { get; set; }
         [Required]

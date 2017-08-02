@@ -24,6 +24,7 @@ namespace PostOffice.Web.Mappings
             Mapper.CreateMap<ServiceViewModel, ReportServiceViewModel>();
             Mapper.CreateMap<TKBDAmount, TKBDAmountViewModel>();
             Mapper.CreateMap<TKBDHistory, TKBDHistoryViewModel>();
+            Mapper.CreateMap<TransactionViewModel, RP2_1>();
         }
     }
 }

@@ -20,6 +20,8 @@ namespace PostOffice.Service
 
         IEnumerable<Transaction> GetAll();
 
+        IEnumerable<Transaction> GetAll(DateTime fromDate, DateTime toDate);
+
         IEnumerable<Transaction> GetAllByUserName(string userName);
 
         IEnumerable<Transaction> GetAllByTime(DateTime fromDate, DateTime toDate, string userName, string userId, int serviceId);
@@ -220,6 +222,11 @@ namespace PostOffice.Service
                     return _transactionRepository.GetAllByTimeAndUsername(fromDate, toDate, user.UserName);
                 }
             }
+        }
+
+        public IEnumerable<Transaction> GetAll(DateTime fromDate, DateTime toDate)
+        {
+            return _transactionRepository.GetAll(fromDate, toDate);
         }
     }
 }

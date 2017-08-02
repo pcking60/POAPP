@@ -119,9 +119,9 @@ namespace PostOfiice.DAta.Repositories
                           select g).ToList()
                         .Select(g => new RP2_1
                         {
-                            Revenue = (g.Sum(p => p.td.Money) / Convert.ToDecimal(g.Key.VAT)),
-                            Tax = (g.Sum(p => p.td.Money) - g.Sum(p => p.td.Money) / Convert.ToDecimal(g.Key.VAT)),
-                            TotalMoney = g.Sum(p => p.td.Money)
+                            //Revenue = (g.Sum(p => p.td.Money) / Convert.ToDecimal(g.Key.VAT)),
+                            //Tax = (g.Sum(p => p.td.Money) - g.Sum(p => p.td.Money) / Convert.ToDecimal(g.Key.VAT)),
+                            //TotalMoney = g.Sum(p => p.td.Money)
                         })).ToList();
 
             return query;

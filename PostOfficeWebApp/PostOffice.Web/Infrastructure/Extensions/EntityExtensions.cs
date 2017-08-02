@@ -1,4 +1,5 @@
-﻿using PostOffice.Model.Models;
+﻿using PostOffice.Common.ViewModels;
+using PostOffice.Model.Models;
 using PostOffice.Web.Models;
 using System;
 
@@ -191,6 +192,17 @@ namespace PostOffice.Web.Infrastructure.Extensions
             //transaction.TransactionDetails = vm.TransactionDetails;
             transaction.Quantity = vm.Quantity;
             transaction.IsCash = vm.IsCash;
+        }
+
+        public static void UpdateRP2_1(RP2_1 RP, TransactionViewModel vm)
+        {
+            RP.STT = vm.ID;
+            RP.ServiceName = vm.ServiceName;
+            RP.Quantity = vm.Quantity;
+            RP.TotalCash = vm.TotalCash;
+            RP.VatOfTotalCash = vm.VatOfTotalCash;
+            RP.TotalDebt = vm.TotalDebt;
+            RP.VatOfTotalDebt = vm.VatOfTotalDebt;
         }
 
         public static void UpdateTransactionDetail(this TransactionDetail transactionDetail, TransactionDetailViewModel vm)
