@@ -180,16 +180,16 @@ namespace PostOffice.Web.Api
 
                                     if (item.TotalDebt > 0 && item.VAT > 0)
                                     {
-                                        item.VatOfTotalDebt = item.TotalDebt / Convert.ToDecimal(item.VAT);
+                                        item.VatOfTotalDebt = item.TotalDebt - item.TotalDebt / Convert.ToDecimal(item.VAT);
                                     }
                                     if (item.TotalCash > 0 && item.VAT > 0)
                                     {
-                                        item.VatOfTotalCash = item.TotalCash / Convert.ToDecimal(item.VAT);
+                                        item.VatOfTotalCash = item.TotalCash - item.TotalCash / Convert.ToDecimal(item.VAT);
                                     }
                                                                    
                                 }
                                 
-                                await ReportHelper.RP1(responseDB.ToList(), fullPath, vm, rp1Advance);
+                                await ReportHelper.RP2_1(responseDB.ToList(), fullPath, vm);
                             }
                             else
                             {
