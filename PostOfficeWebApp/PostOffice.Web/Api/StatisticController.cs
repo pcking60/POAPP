@@ -157,9 +157,19 @@ namespace PostOffice.Web.Api
                         {
                             if (districtId == 0)
                             {
-                                var model = _trasactionService.GetAll(DateTime.Parse(fromDate), DateTime.Parse(toDate));
-                                var responseData = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(model);
-                                foreach (var item in responseData)
+                                int Gg1 = 1;
+                                int Gg2 = 2;
+                                int Gg3 = 3;
+                                int Gg4 = 4;
+                                var modelGg1 = _trasactionService.GetAllByMainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), Gg1);
+                                var modelGg2 = _trasactionService.GetAllByMainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), Gg2);
+                                var modelGg3 = _trasactionService.GetAllByMainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), Gg3);
+                                var modelGg4 = _trasactionService.GetAllByMainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), Gg4);
+                                var responseGg1 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg1);
+                                var responseGg2 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg2);
+                                var responseGg3 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg3);
+                                var responseGg4 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg4);
+                                foreach (var item in responseGg1)
                                 {
                                     item.VAT = _serviceService.GetById(item.ServiceId).VAT;
                                     item.Quantity = Convert.ToInt32(_transactionDetailService.GetAllByCondition("Sản lượng", item.ID).Money);
@@ -174,8 +184,8 @@ namespace PostOffice.Web.Api
                                     }
                                     item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
                                 }
-                                var responseDB = Mapper.Map<IEnumerable<TransactionViewModel>, IEnumerable<RP2_1>>(responseData);
-                                foreach (var item in responseDB)
+                                var responseDBGg1 = Mapper.Map<IEnumerable<TransactionViewModel>, IEnumerable<RP2_1>>(responseGg1);
+                                foreach (var item in responseDBGg1)
                                 {
 
                                     if (item.TotalDebt > 0 && item.VAT > 0)
@@ -185,11 +195,9 @@ namespace PostOffice.Web.Api
                                     if (item.TotalCash > 0 && item.VAT > 0)
                                     {
                                         item.VatOfTotalCash = item.TotalCash - item.TotalCash / Convert.ToDecimal(item.VAT);
-                                    }
-                                                                   
-                                }
-                                
-                                await ReportHelper.RP2_1(responseDB.ToList(), fullPath, vm);
+                                    }                                                                   
+                                }                                
+                                await ReportHelper.RP2_1(responseDBGg1.ToList(), fullPath, vm);
                             }
                             else
                             {

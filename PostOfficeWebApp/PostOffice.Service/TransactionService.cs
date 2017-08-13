@@ -33,6 +33,8 @@ namespace PostOffice.Service
 
         Transaction GetById(int id);
 
+        IEnumerable<Transaction> GetAllByMainGroupId(DateTime fromDate, DateTime toDate, int mainGroupId);
+
         void Save();
     }
     public class TransactionService : ITransactionService
@@ -227,6 +229,11 @@ namespace PostOffice.Service
         public IEnumerable<Transaction> GetAll(DateTime fromDate, DateTime toDate)
         {
             return _transactionRepository.GetAll(fromDate, toDate);
+        }
+
+        public IEnumerable<Transaction> GetAllByMainGroupId(DateTime fromDate, DateTime toDate, int mainGroupId)
+        {
+            return _transactionRepository.GetAllByMainGroupId(fromDate, toDate, mainGroupId);
         }
     }
 }

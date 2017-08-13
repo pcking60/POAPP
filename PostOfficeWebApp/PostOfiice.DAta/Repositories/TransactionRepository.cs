@@ -14,6 +14,7 @@ namespace PostOfiice.DAta.Repositories
         IEnumerable<Transaction> GetAllByUserName(string userName);
 
         IEnumerable<Transaction> GetAll(DateTime fromDate, DateTime toDate);
+        IEnumerable<Transaction> GetAllByMainGroupId(DateTime fromDate, DateTime toDate, int mainGroupId);
 
         IEnumerable<Transaction> GetAll(DateTime fromDate, DateTime toDate, string userId, int serviceId);
 
@@ -180,6 +181,21 @@ namespace PostOfiice.DAta.Repositories
                                   join ts in this.DbContext.Transactions
                                   on u.Id equals ts.UserId
                                   where u.POID == id && (DbFunctions.TruncateTime(ts.TransactionDate) >= fromDate && DbFunctions.TruncateTime(ts.TransactionDate) <= toDate) && ts.ServiceId == serviceId
+                                  select ts;
+
+            return listTransaction;
+        }
+
+        public IEnumerable<Transaction> GetAllByMainGroupId(DateTime fromDate, DateTime toDate, int mainGroupId)
+        {
+            var listTransaction = from g in DbContext.ServiceGroups
+                                  join mg in DbContext.MainServiceGroups                                   
+                                  on g.MainServiceGroupId equals mg.Id
+                                  join s in DbContext.Services
+                                  on g.ID equals s.GroupID
+                                  join ts in DbContext.Transactions
+                                  on s.ID equals ts.ServiceId
+                                  where mg.Id == mainGroupId && (DbFunctions.TruncateTime(ts.TransactionDate) >= fromDate && DbFunctions.TruncateTime(ts.TransactionDate) <= toDate)
                                   select ts;
 
             return listTransaction;

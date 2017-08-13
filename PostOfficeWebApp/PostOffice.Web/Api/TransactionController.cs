@@ -182,6 +182,7 @@ namespace PostOffice.Web.Api
                     ICollection<TransactionDetail> transactionDetails = transactionVM.TransactionDetails;
                     var responseTransactionDetail = Mapper.Map<IEnumerable<TransactionDetail>, IEnumerable<TransactionDetailViewModel>>(transactionDetails);
                     transactionVM.UpdatedBy = User.Identity.Name;
+                    Transaction ts = new Transaction();
                     dbTransaction.UpdateTransaction(transactionVM);
                     _transactionService.Update(dbTransaction);
                     _transactionService.Save();

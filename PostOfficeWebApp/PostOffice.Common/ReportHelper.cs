@@ -414,8 +414,12 @@ namespace PostOffice.Common
 
 
                     //format number
-                    ws.Cells["d9:I" + (noRow + 8)].Style.Numberformat.Format = "#,##0.00";
-                    ws.Cells[noRow + 9, 2, noRow + 9, 9].Style.Numberformat.Format = "#,##0.00";
+                    if (noRow > 0)
+                    {
+                        ws.Cells["d9:I" + (noRow + 8)].Style.Numberformat.Format = "#,##0.00";
+                        ws.Cells[noRow + 9, 2, noRow + 9, 9].Style.Numberformat.Format = "#,##0.00";
+                    }
+                    
                     //part 2
                     //ws.Cells[noRow + 11, 2].Value = "Tiền giữ hộ";
                     //ws.Cells[noRow + 11, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
@@ -507,10 +511,10 @@ namespace PostOffice.Common
                     ws.Cells[noRow + 21, 1, noRow + 21, 2].Style.Font.Bold = true;
                     ws.Cells[noRow + 21, 1, noRow + 21, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
-                    ws.Cells[noRow + 17, 3, noRow + 17, 9].Merge = true;
-                    ws.Cells[noRow + 17, 3, noRow + 17, 9].Value = "Người phê duyệt";
-                    ws.Cells[noRow + 17, 3, noRow + 17, 9].Style.Font.Bold = true;
-                    ws.Cells[noRow + 17, 3, noRow + 17, 9].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    ws.Cells[noRow + 17, 7, noRow + 17, 9].Merge = true;
+                    ws.Cells[noRow + 17, 7, noRow + 17, 9].Value = "Người phê duyệt";
+                    ws.Cells[noRow + 17, 7, noRow + 17, 9].Style.Font.Bold = true;
+                    ws.Cells[noRow + 17, 7, noRow + 17, 9].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
                     ws.Cells[noRow + 22, 3, noRow + 22, 9].Merge = true;
                     ws.Cells[noRow + 22, 3, noRow + 22, 9].Value = DateTime.Now;
