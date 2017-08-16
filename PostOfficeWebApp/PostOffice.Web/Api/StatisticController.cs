@@ -28,10 +28,12 @@ namespace PostOffice.Web.Api
         private ITransactionService _trasactionService;
         private ITransactionDetailService _transactionDetailService;
         private IMainServiceGroupService _mainGroupService;
+        private IServiceGroupService _serviceGroupService;
 
 
-        public StatisticController(IMainServiceGroupService mainGroupService, ITransactionDetailService transactionDetailService, ITransactionService trasactionService, IServiceService serviceService, IApplicationUserService userService, IErrorService errorService, IStatisticService statisticService, IDistrictService districtService, IPOService poService) : base(errorService)
+        public StatisticController(IServiceGroupService serviceGroupService, IMainServiceGroupService mainGroupService, ITransactionDetailService transactionDetailService, ITransactionService trasactionService, IServiceService serviceService, IApplicationUserService userService, IErrorService errorService, IStatisticService statisticService, IDistrictService districtService, IPOService poService) : base(errorService)
         {
+            _serviceGroupService = serviceGroupService;
             _mainGroupService = mainGroupService;
             _transactionDetailService = transactionDetailService;
             _trasactionService = trasactionService;
@@ -212,32 +214,24 @@ namespace PostOffice.Web.Api
                                 {
                                     item.VAT = _serviceService.GetById(item.ServiceId).VAT;
                                     item.Quantity = Convert.ToInt32(_transactionDetailService.GetAllByCondition("Sản lượng", item.ID).Money);
-                                    item.ServiceName = _serviceService.GetById(item.ServiceId).Name;
-                                    if (!item.t)
+                                    item.ServiceName = _serviceService.GetById(item.ServiceId).Name;                                   
+                                    item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
+                                    var groupId = _serviceGroupService.GetSigleByServiceId(item.ID);
+                                    if (groupId!=null && groupId.ID == 93)
                                     {
-                                        item.TotalDebt = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                        item.IsReceive = true;
+                                        item.TotalMoneyReceive = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
                                     }
                                     else
                                     {
-                                        item.TotalCash = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                        item.IsReceive = false;
+                                        item.TotalMoneySent = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
                                     }
-                                    item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
                                 }
                                 var responseDBGg3 = Mapper.Map<IEnumerable<TransactionViewModel>, IEnumerable<MainGroup3>>(responseGg3);
-                                foreach (var item in responseDBGg1)
-                                {
-
-                                    if (item.TotalDebt > 0 && item.VAT > 0)
-                                    {
-                                        item.VatOfTotalDebt = item.TotalDebt - item.TotalDebt / Convert.ToDecimal(item.VAT);
-                                    }
-                                    if (item.TotalCash > 0 && item.VAT > 0)
-                                    {
-                                        item.VatOfTotalCash = item.TotalCash - item.TotalCash / Convert.ToDecimal(item.VAT);
-                                    }
-                                }
+                                
                                 #endregion
-                                await ReportHelper.RP2_1(responseDBGg1.ToList(), fullPath, vm);
+                                await ReportHelper.RP2_1(responseDBGg1.ToList(), responseDBGg3.ToList(), fullPath, vm);
                             }
                             else
                             {

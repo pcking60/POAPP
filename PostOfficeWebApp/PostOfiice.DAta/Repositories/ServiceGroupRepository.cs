@@ -11,6 +11,8 @@ namespace PostOfiice.DAta.Repositories
         IEnumerable<ServiceGroup> GetByAlias(string alias);
 
         IEnumerable<Service> GetAllByServiceGroupId(int id);
+
+        ServiceGroup GetSigleByServiceId(int id);
     }
 
     public class ServiceGroupRepository : RepositoryBase<ServiceGroup>, IServiceGroupRepository
@@ -49,6 +51,18 @@ namespace PostOfiice.DAta.Repositories
                      where sg.ID == id
                      select s;
             return no;
+        }
+
+        public ServiceGroup GetSigleByServiceId(int id)
+        {
+            var query = from s in DbContext.Services
+                        join sg in DbContext.ServiceGroups
+                        on s.GroupID equals sg.ID
+                        join ts in DbContext.Transactions
+                        on s.ID equals ts.ServiceId
+                        where ts.ID == id
+                        select sg;
+            return query.FirstOrDefault();
         }
     }
 }

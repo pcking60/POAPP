@@ -2,6 +2,7 @@
 using PostOfiice.DAta.Infrastructure;
 using PostOfiice.DAta.Repositories;
 using System.Collections.Generic;
+using System;
 
 namespace PostOffice.Service
 {
@@ -22,6 +23,7 @@ namespace PostOffice.Service
         ServiceGroup GetById(int id);
 
         IEnumerable<Model.Models.Service> GetAllByServiceGroupId(int id);
+        ServiceGroup GetSigleByServiceId(int id);
 
         void Save();
     }
@@ -77,6 +79,11 @@ namespace PostOffice.Service
         public ServiceGroup GetById(int id)
         {
             return _serviceGroupRepository.GetSingleByID(id);
+        }
+
+        public ServiceGroup GetSigleByServiceId(int id)
+        {
+            return _serviceGroupRepository.GetSigleByServiceId(id);
         }
 
         public void Save()
