@@ -1,6 +1,6 @@
 ﻿namespace PostOffice.Common.ViewModels
 {
-    public class RP2_1
+    public class MainGroup1
     {
         public int? STT { get; set; }
         public string ServiceName { get; set; }

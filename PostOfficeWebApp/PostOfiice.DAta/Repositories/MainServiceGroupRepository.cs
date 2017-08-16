@@ -1,10 +1,13 @@
 ﻿using PostOffice.Model.Models;
 using PostOfiice.DAta.Infrastructure;
 using System;
+using System.Collections.Generic;
 
 namespace PostOfiice.DAta.Repositories
 {
-    public interface IMainServiceGroupRepository:IRepository<MainServiceGroup> { }
+    public interface IMainServiceGroupRepository:IRepository<MainServiceGroup> {
+        
+    }
 
     public class MainServiceGroupRepository : RepositoryBase<MainServiceGroup>, IMainServiceGroupRepository
     {

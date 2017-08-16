@@ -194,7 +194,7 @@ namespace PostOffice.Web.Infrastructure.Extensions
             transaction.IsCash = vm.IsCash;
         }
 
-        public static void UpdateRP2_1(RP2_1 RP, TransactionViewModel vm)
+        public static void UpdateMainGroup1(MainGroup1 RP, TransactionViewModel vm)
         {
             RP.STT = vm.ID;
             RP.ServiceName = vm.ServiceName;

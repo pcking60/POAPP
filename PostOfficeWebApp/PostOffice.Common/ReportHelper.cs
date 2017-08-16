@@ -41,7 +41,7 @@ namespace PostOffice.Common
                     ExcelWorksheet ws = pck.Workbook.Worksheets.Add(nameof(T));
 
                     #region templateInfo
-
+                    
                     ws.Cells["A1:E1"].Merge = true;
                     ws.Cells["A1:E1"].Value = "TỔNG CÔNG TY BƯU ĐIỆN VIỆT NAM \n BƯU ĐIỆN TỈNH SÓC TRĂNG";
                     ws.Cells["A1:E1"].Style.WrapText = true;
@@ -116,6 +116,9 @@ namespace PostOffice.Common
                     ExcelWorksheet ws = pck.Workbook.Worksheets.Add(nameof(T));
 
                     #region templateInfo
+
+                    // all
+                    ws.Cells["A1:Z1000"].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
 
                     //header
                     ws.Cells["A1:E1"].Merge = true;
@@ -320,6 +323,9 @@ namespace PostOffice.Common
 
                     #region templateInfo
 
+                    // all
+                    ws.Cells["A1:Z1000"].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+
                     //header
                     ws.Cells["A1:I1"].Merge = true;
                     ws.Cells["A1:I1"].Value = "TỔNG CÔNG TY BƯU ĐIỆN VIỆT NAM \n BƯU ĐIỆN TỈNH SÓC TRĂNG";
@@ -372,52 +378,53 @@ namespace PostOffice.Common
                     int noRow = datasource.Count;
 
                     // load data
-                    ws.Cells["A8"].LoadFromCollection<T>(datasource, true, TableStyles.Light1);
+                    ws.Cells["A9"].LoadFromCollection<T>(datasource, true, TableStyles.Light1);
                     for(int i=1; i<=noRow; i++)
                     {
-                        ws.Cells["A" + (i + 8)].Value = i;
+                        ws.Cells["A" + (i + 9)].Value = i;
                     }
-                    //header
-                    ws.Cells["A8"].Value = "STT";
-                    ws.Cells["B8"].Value = "Dịch vụ";
-                    ws.Cells["C8"].Value = "Số lượng";
-                    ws.Cells["D8"].Value = "Thuế";
-                    ws.Cells["E8"].Value = "Tiền mặt";
-                    ws.Cells["F8"].Value = "Vat Tiền mặt";
-                    ws.Cells["G8"].Value = "Tiền nợ";
-                    ws.Cells["H8"].Value = "Vat Tiền nợ";
-                    ws.Cells["I8"].Value = "DTTL";
-                    ws.Cells["A8:I8"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                    ws.Cells["A8:I8"].Style.Font.Bold = true;
-                    ws.Cells[8, 1, 8, 9].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                    ws.Cells[8, 1, 8, 9].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(236, 143, 50));
-                    
-                    ws.Cells.AutoFitColumns();
 
                     //format col 1
                     ws.Column(1).Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    ws.Cells["A8:I8"].Merge = true;
+                    ws.Cells["A8:I8"].Value = "Nhóm Bưu Chính Chuyển Phát";
+                    //header
+                    ws.Row(9).Height = 30;
+                    ws.Cells["A9"].Value = "STT";
+                    ws.Cells["B9"].Value = "Dịch vụ";
+                    ws.Cells["C9"].Value = "Số \nlượng";
+                    ws.Cells["D9"].Value = "Thuế";
+                    ws.Cells["E9"].Value = "Tiền mặt";
+                    ws.Cells["F9"].Value = "Vat \ntiền mặt";
+                    ws.Cells["G9"].Value = "Tiền nợ";
+                    ws.Cells["H9"].Value = "Vat \ntiền nợ";
+                    ws.Cells["I9"].Value = "DTTL";
+                    ws.Cells["A9:I9"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    ws.Cells["A9:I9"].Style.Font.Bold = true;
+                    ws.Cells[9, 1, 9, 9].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    ws.Cells[9, 1, 9, 9].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(236, 143, 50));
+                    
+                    ws.Cells.AutoFitColumns();
+                    ws.Row(9).Style.WrapText = true;
 
-                    //format col 3,4,5
-                    //ws.Cells[9, 3, noRow + 10, 8].Style.Numberformat.Format = "#,##0.00";
-
-                    //sum part 1
-                    ws.Cells[noRow + 9, 2].Value = "Tổng cộng doanh thu";
-                    ws.Cells[noRow + 9, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                    ws.Row(noRow + 9).Style.Font.Bold = true;
-                    ws.Cells[noRow + 9, 3].Formula = "sum(c9:c" + (noRow + 8) + ")";
-                    ws.Cells[noRow + 9, 4].Formula = "sum(d9:d" + (noRow + 8) + ")";
-                    ws.Cells[noRow + 9, 5].Formula = "sum(e9:e" + (noRow + 8) + ")";
-                    ws.Cells[noRow + 9, 6].Formula = "sum(F9:F" + (noRow + 8) + ")";
-                    ws.Cells[noRow + 9, 7].Formula = "sum(G9:G" + (noRow + 8) + ")";
-                    ws.Cells[noRow + 9, 8].Formula = "sum(H9:H" + (noRow + 8) + ")";
-                    ws.Cells[noRow + 9, 9].Formula = "sum(I9:I" + (noRow + 8) + ")";
+                    //sum group 1
+                    ws.Cells[noRow + 10, 2].Value = "Tổng cộng doanh thu";
+                    ws.Cells[noRow + 10, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    ws.Row(noRow + 10).Style.Font.Bold = true;
+                    ws.Cells[noRow + 10, 3].Formula = "sum(c10:c" + (noRow + 9) + ")";
+                    ws.Cells[noRow + 10, 4].Formula = "sum(d10:d" + (noRow + 9) + ")";
+                    ws.Cells[noRow + 10, 5].Formula = "sum(e10:e" + (noRow + 9) + ")";
+                    ws.Cells[noRow + 10, 6].Formula = "sum(F10:F" + (noRow + 9) + ")";
+                    ws.Cells[noRow + 10, 7].Formula = "sum(G10:G" + (noRow + 9) + ")";
+                    ws.Cells[noRow + 10, 8].Formula = "sum(H10:H" + (noRow + 9) + ")";
+                    ws.Cells[noRow + 10, 9].Formula = "sum(I10:I" + (noRow + 9) + ")";
 
 
                     //format number
                     if (noRow > 0)
                     {
-                        ws.Cells["d9:I" + (noRow + 8)].Style.Numberformat.Format = "#,##0.00";
-                        ws.Cells[noRow + 9, 2, noRow + 9, 9].Style.Numberformat.Format = "#,##0.00";
+                        ws.Cells["d10:I" + (noRow + 9)].Style.Numberformat.Format = "#,##0.00";
+                        ws.Cells[noRow + 10, 2, noRow + 10, 9].Style.Numberformat.Format = "#,##0.00";
                     }
                     
                     //part 2

@@ -20,7 +20,6 @@ namespace PostOffice.Web.Api
     [RoutePrefix("api/statistic")]
     public class StatisticController : ApiControllerBase
     {
-        #region constructor
         private IStatisticService _statisticService;
         private IDistrictService _districtService;
         private IPOService _poService;
@@ -28,10 +27,12 @@ namespace PostOffice.Web.Api
         private IServiceService _serviceService;
         private ITransactionService _trasactionService;
         private ITransactionDetailService _transactionDetailService;
+        private IMainServiceGroupService _mainGroupService;
 
 
-        public StatisticController(ITransactionDetailService transactionDetailService, ITransactionService trasactionService, IServiceService serviceService, IApplicationUserService userService, IErrorService errorService, IStatisticService statisticService, IDistrictService districtService, IPOService poService) : base(errorService)
+        public StatisticController(IMainServiceGroupService mainGroupService, ITransactionDetailService transactionDetailService, ITransactionService trasactionService, IServiceService serviceService, IApplicationUserService userService, IErrorService errorService, IStatisticService statisticService, IDistrictService districtService, IPOService poService) : base(errorService)
         {
+            _mainGroupService = mainGroupService;
             _transactionDetailService = transactionDetailService;
             _trasactionService = trasactionService;
             _serviceService = serviceService;
@@ -40,7 +41,6 @@ namespace PostOffice.Web.Api
             _districtService = districtService;
             _poService = poService;
         }
-        #endregion
 
         [Route("getrevenue")]
         [HttpGet]
@@ -69,7 +69,6 @@ namespace PostOffice.Web.Api
 
             });
         }
-
         [HttpGet]
         [Route("rp1")]
         public async Task<HttpResponseMessage> RP1(HttpRequestMessage request, string fromDate, string toDate, int districtId, int functionId, int unitId, string userId, int serviceId)
@@ -148,6 +147,8 @@ namespace PostOffice.Web.Api
                 }
                 vm.CreatedBy = User.Identity.Name;
 
+                var listMainGroup = _mainGroupService.GetAll();
+
                 switch (functionId)
                 {
                     case 1:
@@ -156,28 +157,25 @@ namespace PostOffice.Web.Api
                         break;
                     case 2:
                         vm.FunctionName = "Bảng kê thu tiền tại bưu cục - chi tiết";
-                        // is Admin do something
                         if (isAdmin)
                         {
                             if (districtId == 0)
                             {
-                                // have 4 main group
                                 int Gg1 = 1;
                                 int Gg2 = 2;
                                 int Gg3 = 3;
                                 int Gg4 = 4;
-
-                                //get transaction by main group
                                 var modelGg1 = _trasactionService.GetAllByMainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), Gg1);
                                 var modelGg2 = _trasactionService.GetAllByMainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), Gg2);
                                 var modelGg3 = _trasactionService.GetAllByMainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), Gg3);
                                 var modelGg4 = _trasactionService.GetAllByMainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), Gg4);
-
-                                // using auto map to get something neccesary
                                 var responseGg1 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg1);
                                 var responseGg2 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg2);
                                 var responseGg3 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg3);
                                 var responseGg4 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg4);
+
+                                // main group 1 - BCCP
+                                #region BCCP
                                 foreach (var item in responseGg1)
                                 {
                                     item.VAT = _serviceService.GetById(item.ServiceId).VAT;
@@ -193,7 +191,7 @@ namespace PostOffice.Web.Api
                                     }
                                     item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
                                 }
-                                var responseDBGg1 = Mapper.Map<IEnumerable<TransactionViewModel>, IEnumerable<RP2_1>>(responseGg1);
+                                var responseDBGg1 = Mapper.Map<IEnumerable<TransactionViewModel>, IEnumerable<MainGroup1>>(responseGg1);
                                 foreach (var item in responseDBGg1)
                                 {
 
@@ -205,12 +203,45 @@ namespace PostOffice.Web.Api
                                     {
                                         item.VatOfTotalCash = item.TotalCash - item.TotalCash / Convert.ToDecimal(item.VAT);
                                     }                                                                   
-                                }                                
+                                }
+                                #endregion
+
+                                // main group 3 - TCBC
+                                #region TCBC
+                                foreach (var item in responseGg3)
+                                {
+                                    item.VAT = _serviceService.GetById(item.ServiceId).VAT;
+                                    item.Quantity = Convert.ToInt32(_transactionDetailService.GetAllByCondition("Sản lượng", item.ID).Money);
+                                    item.ServiceName = _serviceService.GetById(item.ServiceId).Name;
+                                    if (!item.t)
+                                    {
+                                        item.TotalDebt = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                    else
+                                    {
+                                        item.TotalCash = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                    item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
+                                }
+                                var responseDBGg3 = Mapper.Map<IEnumerable<TransactionViewModel>, IEnumerable<MainGroup3>>(responseGg3);
+                                foreach (var item in responseDBGg1)
+                                {
+
+                                    if (item.TotalDebt > 0 && item.VAT > 0)
+                                    {
+                                        item.VatOfTotalDebt = item.TotalDebt - item.TotalDebt / Convert.ToDecimal(item.VAT);
+                                    }
+                                    if (item.TotalCash > 0 && item.VAT > 0)
+                                    {
+                                        item.VatOfTotalCash = item.TotalCash - item.TotalCash / Convert.ToDecimal(item.VAT);
+                                    }
+                                }
+                                #endregion
                                 await ReportHelper.RP2_1(responseDBGg1.ToList(), fullPath, vm);
                             }
                             else
                             {
-                                if (districtId!=0 && unitId == 0)
+                                if (unitId == 0)
                                 {
 
                                 }
@@ -219,8 +250,7 @@ namespace PostOffice.Web.Api
 
                                 }
                             }
-                        } 
-                        // is Manger do something
+                        }
                         else
                         {
 
