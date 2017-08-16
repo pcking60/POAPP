@@ -208,6 +208,38 @@ namespace PostOffice.Web.Api
                                 }
                                 #endregion
 
+                                // main group 2 - PPTT
+                                #region PPTT
+                                foreach (var item in responseGg2)
+                                {
+                                    item.VAT = _serviceService.GetById(item.ServiceId).VAT;
+                                    item.Quantity = Convert.ToInt32(_transactionDetailService.GetAllByCondition("Sản lượng", item.ID).Money);
+                                    item.ServiceName = _serviceService.GetById(item.ServiceId).Name;
+                                    if (!item.IsCash)
+                                    {
+                                        item.TotalDebt = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                    else
+                                    {
+                                        item.TotalCash = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                    item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
+                                }
+                                var responseDBGg2 = Mapper.Map<IEnumerable<TransactionViewModel>, IEnumerable<MainGroup1>>(responseGg2);
+                                foreach (var item in responseDBGg2)
+                                {
+
+                                    if (item.TotalDebt > 0 && item.VAT > 0)
+                                    {
+                                        item.VatOfTotalDebt = item.TotalDebt - item.TotalDebt / Convert.ToDecimal(item.VAT);
+                                    }
+                                    if (item.TotalCash > 0 && item.VAT > 0)
+                                    {
+                                        item.VatOfTotalCash = item.TotalCash - item.TotalCash / Convert.ToDecimal(item.VAT);
+                                    }
+                                }
+                                #endregion
+
                                 // main group 3 - TCBC
                                 #region TCBC
                                 foreach (var item in responseGg3)
@@ -229,9 +261,12 @@ namespace PostOffice.Web.Api
                                     }
                                 }
                                 var responseDBGg3 = Mapper.Map<IEnumerable<TransactionViewModel>, IEnumerable<MainGroup3>>(responseGg3);
-                                
+
                                 #endregion
-                                await ReportHelper.RP2_1(responseDBGg1.ToList(), responseDBGg3.ToList(), fullPath, vm);
+
+
+
+                                await ReportHelper.RP2_1(responseDBGg1.ToList(), responseDBGg2.ToList(), responseDBGg3.ToList(), fullPath, vm);
                             }
                             else
                             {
