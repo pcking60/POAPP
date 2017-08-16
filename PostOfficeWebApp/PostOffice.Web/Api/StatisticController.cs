@@ -20,6 +20,7 @@ namespace PostOffice.Web.Api
     [RoutePrefix("api/statistic")]
     public class StatisticController : ApiControllerBase
     {
+        #region constructor
         private IStatisticService _statisticService;
         private IDistrictService _districtService;
         private IPOService _poService;
@@ -39,6 +40,7 @@ namespace PostOffice.Web.Api
             _districtService = districtService;
             _poService = poService;
         }
+        #endregion
 
         [Route("getrevenue")]
         [HttpGet]
@@ -67,6 +69,7 @@ namespace PostOffice.Web.Api
 
             });
         }
+
         [HttpGet]
         [Route("rp1")]
         public async Task<HttpResponseMessage> RP1(HttpRequestMessage request, string fromDate, string toDate, int districtId, int functionId, int unitId, string userId, int serviceId)
@@ -153,18 +156,24 @@ namespace PostOffice.Web.Api
                         break;
                     case 2:
                         vm.FunctionName = "Bảng kê thu tiền tại bưu cục - chi tiết";
+                        // is Admin do something
                         if (isAdmin)
                         {
                             if (districtId == 0)
                             {
+                                // have 4 main group
                                 int Gg1 = 1;
                                 int Gg2 = 2;
                                 int Gg3 = 3;
                                 int Gg4 = 4;
+
+                                //get transaction by main group
                                 var modelGg1 = _trasactionService.GetAllByMainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), Gg1);
                                 var modelGg2 = _trasactionService.GetAllByMainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), Gg2);
                                 var modelGg3 = _trasactionService.GetAllByMainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), Gg3);
                                 var modelGg4 = _trasactionService.GetAllByMainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), Gg4);
+
+                                // using auto map to get something neccesary
                                 var responseGg1 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg1);
                                 var responseGg2 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg2);
                                 var responseGg3 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg3);
@@ -201,7 +210,7 @@ namespace PostOffice.Web.Api
                             }
                             else
                             {
-                                if (unitId == 0)
+                                if (districtId!=0 && unitId == 0)
                                 {
 
                                 }
@@ -210,7 +219,8 @@ namespace PostOffice.Web.Api
 
                                 }
                             }
-                        }
+                        } 
+                        // is Manger do something
                         else
                         {
 
