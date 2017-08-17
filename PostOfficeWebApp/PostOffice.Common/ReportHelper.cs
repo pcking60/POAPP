@@ -279,20 +279,20 @@ namespace PostOffice.Common
                     ws.Cells[8, 1, noRow + 15, 5].Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
 
                     //signal
-                    ws.Cells[noRow + 17, 1, noRow + 17, 2].Merge = true;
-                    ws.Cells[noRow + 17, 1, noRow + 17, 2].Value = "Người lập bảng";
-                    ws.Cells[noRow + 17, 1, noRow + 17, 2].Style.Font.Bold = true;
-                    ws.Cells[noRow + 17, 1, noRow + 17, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    ws.Cells[noRow + 20, 1, noRow + 20, 2].Merge = true;
+                    ws.Cells[noRow + 20, 1, noRow + 20, 2].Value = "Người lập bảng";
+                    ws.Cells[noRow + 20, 1, noRow + 20, 2].Style.Font.Bold = true;
+                    ws.Cells[noRow + 20, 1, noRow + 20, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
                     ws.Cells[noRow + 21, 1, noRow + 21, 2].Merge = true;
                     ws.Cells[noRow + 21, 1, noRow + 21, 2].Value = vm.CreatedBy;
                     ws.Cells[noRow + 21, 1, noRow + 21, 2].Style.Font.Bold = true;
                     ws.Cells[noRow + 21, 1, noRow + 21, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
-                    ws.Cells[noRow + 17, 3, noRow + 17, 5].Merge = true;
-                    ws.Cells[noRow + 17, 3, noRow + 17, 5].Value = "Người phê duyệt";
-                    ws.Cells[noRow + 17, 3, noRow + 17, 5].Style.Font.Bold = true;
-                    ws.Cells[noRow + 17, 3, noRow + 17, 5].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    ws.Cells[noRow + 20, 3, noRow + 20, 5].Merge = true;
+                    ws.Cells[noRow + 20, 3, noRow + 20, 5].Value = "Người phê duyệt";
+                    ws.Cells[noRow + 20, 3, noRow + 20, 5].Style.Font.Bold = true;
+                    ws.Cells[noRow + 20, 3, noRow + 20, 5].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
                     ws.Cells[noRow + 22, 3, noRow + 22, 5].Merge = true;
                     ws.Cells[noRow + 22, 3, noRow + 22, 5].Value = DateTime.Now;
@@ -374,115 +374,160 @@ namespace PostOffice.Common
                     ws.Cells["C6:I6"].Value = "Từ " + vm.FromDate.ToString("dd/MM/yyyy") + " đến " + vm.ToDate.ToString("dd/MM/yyyy"); ;
 
                     #endregion templateInfo
-                    
-                    //load data source 1
-                    ws.Cells["A9"].LoadFromCollection<T1>(datasource1, true, TableStyles.Light1);
-
-                    //count number rows
+                                        
+                    //count number rows BCCP
                     int noRow = datasource1.Count;
+                    // count row of TCBC
+                    int noRow2 = datasource3.Count;
+                    // count row of PPTT
+                    int noRow3 = datasource2.Count;
 
-                    //fill STT
-                    for (int i=1; i<=noRow; i++)
-                    {
-                        ws.Cells["A" + (i + 9)].Value = i;
-                    }
-
-                    //format col 1
-                    ws.Column(1).Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-
-                    #region Body BCCP
-                    //Header BCCP
-                    ws.Cells["A8:I8"].Merge = true;
-                    ws.Cells["A8:I8"].Value = "I. Nhóm Bưu Chính Chuyển Phát";
-                    ws.Cells["A8:I8"].Style.Font.Bold = true;
-                    ws.Row(8).Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
-
-                    //header
-                    ws.Row(9).Height = 30;
-                    ws.Cells["A9"].Value = "STT";
-                    ws.Cells["B9"].Value = "Dịch vụ";
-                    ws.Cells["C9"].Value = "Số \nlượng";
-                    ws.Cells["D9"].Value = "Thuế";
-                    ws.Cells["E9"].Value = "Tiền mặt";
-                    ws.Cells["F9"].Value = "Vat \ntiền mặt";
-                    ws.Cells["G9"].Value = "Tiền nợ";
-                    ws.Cells["H9"].Value = "Vat \ntiền nợ";
-                    ws.Cells["I9"].Value = "DTTL";
-                    ws.Cells["A9:I9"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                    ws.Cells["A9:I9"].Style.Font.Bold = true;
-                    ws.Cells[9, 1, 9, 9].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                    ws.Cells[9, 1, 9, 9].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(236, 143, 50));
-                    
-                    ws.Cells.AutoFitColumns();
-                    ws.Row(9).Style.WrapText = true;
-
-                    //sum group 1
-                    ws.Cells[noRow + 10, 2].Value = "Tổng cộng doanh thu";
-                    ws.Cells[noRow + 10, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                    ws.Row(noRow + 10).Style.Font.Bold = true;
-                    ws.Cells[noRow + 10, 3].Formula = "sum(c10:c" + (noRow + 9) + ")";
-                    ws.Cells[noRow + 10, 5].Formula = "sum(e10:e" + (noRow + 9) + ")";
-                    ws.Cells[noRow + 10, 6].Formula = "sum(F10:F" + (noRow + 9) + ")";
-                    ws.Cells[noRow + 10, 7].Formula = "sum(G10:G" + (noRow + 9) + ")";
-                    ws.Cells[noRow + 10, 8].Formula = "sum(H10:H" + (noRow + 9) + ")";
-                    ws.Cells[noRow + 10, 9].Formula = "sum(I10:I" + (noRow + 9) + ")";
-
+                    #region BCCP
                     //format number
                     if (noRow > 0)
                     {
-                        ws.Cells["d10:I" + (noRow + 9)].Style.Numberformat.Format = "#,##0.00";
-                        ws.Cells[noRow + 10, 2, noRow + 10, 9].Style.Numberformat.Format = "#,##0.00";
+                        //load data source 1
+                        ws.Cells["A9"].LoadFromCollection<T1>(datasource1, true, TableStyles.Light1);
+                        //fill STT
+                        for (int i = 1; i <= noRow; i++)
+                        {
+                            ws.Cells["A" + (i + 9)].Value = i;
+                        }
+
+                        //format col 1
+                        ws.Column(1).Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        //Header BCCP
+                        ws.Cells["A8:I8"].Merge = true;
+                        ws.Cells["A8:I8"].Value = "I. Nhóm Bưu Chính Chuyển Phát";
+                        ws.Cells["A8:I8"].Style.Font.Bold = true;
+                        ws.Row(8).Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+
+                        //header
+                        ws.Row(9).Height = 30;
+                        ws.Cells["A9"].Value = "STT";
+                        ws.Cells["B9"].Value = "Dịch vụ";
+                        ws.Cells["C9"].Value = "Số \nlượng";
+                        ws.Cells["D9"].Value = "Thuế";
+                        ws.Cells["E9"].Value = "Tiền mặt";
+                        ws.Cells["F9"].Value = "Vat \ntiền mặt";
+                        ws.Cells["G9"].Value = "Tiền nợ";
+                        ws.Cells["H9"].Value = "Vat \ntiền nợ";
+                        ws.Cells["I9"].Value = "DTTL";
+
+                        ws.Cells["A9:I9"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        ws.Cells["A9:I9"].Style.Font.Bold = true;
+                        ws.Cells[9, 1, 9, 9].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        ws.Cells[9, 1, 9, 9].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(236, 143, 50));
+
+                        ws.Cells.AutoFitColumns();
+                        ws.Row(9).Style.WrapText = true;
+
+                        ws.Cells["d10:I" + (noRow + 10)].Style.Numberformat.Format = "#,##0.00";                        
+
+                        //sum group 1
+                        ws.Cells[noRow + 10, 2].Value = "Tổng cộng";
+                        ws.Cells[noRow + 10, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        ws.Row(noRow + 10).Style.Font.Bold = true;
+                        ws.Cells[noRow + 10, 3].Formula = "sum(c10:c" + (noRow + 9) + ")";
+                        ws.Cells[noRow + 10, 5].Formula = "sum(e10:e" + (noRow + 9) + ")";
+                        ws.Cells[noRow + 10, 6].Formula = "sum(F10:F" + (noRow + 9) + ")";
+                        ws.Cells[noRow + 10, 7].Formula = "sum(G10:G" + (noRow + 9) + ")";
+                        ws.Cells[noRow + 10, 8].Formula = "sum(H10:H" + (noRow + 9) + ")";
+                        ws.Cells[noRow + 10, 9].Formula = "sum(I10:I" + (noRow + 9) + ")";
                     }
+                    #endregion BCCP
 
-                    #endregion
-                    
-                   
-
-                    // load data source 2
-                    ws.Cells["A" +(noRow + 13)].LoadFromCollection<T3>(datasource3, true, TableStyles.Light1);
-
-                    // count row of source 2
-                    int noRow2 = datasource2.Count;
-
-                    ws.Cells["A" + (noRow + 12) + ":I" + (noRow + 12)].Merge = true;
-                    ws.Cells["A" + (noRow + 12) + ":I" + (noRow + 12)].Value = "III. Nhóm Tài Chính Bưu Chính";
-                    ws.Cells["A" + (noRow + 12) + ":I" + (noRow + 12)].Style.Font.Bold = true;
-                    ws.Row(noRow + 12).Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
-
-                    //header
-                    ws.Row(noRow + 13).Height = 30;
-                    ws.Cells["A" + (noRow + 13)].Value = "STT";
-                    ws.Cells["B" + (noRow + 13)].Value = "Dịch vụ";
-                    ws.Cells["C" + (noRow + 13)].Value = "Số \nlượng";
-                    ws.Cells["D" + (noRow + 13)].Value = "Thuế";
-                    ws.Cells["E" + (noRow + 13)].Value = "Số tiền \nkhách nhận";
-                    ws.Cells["F" + (noRow + 13)].Value = "Số tiền \nnhận của khách";
-                    ws.Cells["G" + (noRow + 13)].Value = "Doanh thu \ntính lương";                   
-                    ws.Cells["A" + (noRow + 13) + ":I" + (noRow + 13)].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                    ws.Cells["A" + (noRow + 13) + ":I" + (noRow + 13)].Style.Font.Bold = true;
-                    ws.Cells[(noRow + 13), 1, (noRow + 13), 7].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                    ws.Cells[(noRow + 13), 1, (noRow + 13), 7].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(236, 143, 50));
-                    ws.Row(noRow + 13).Style.WrapText = true;
-
-                    // fill STT
-                    for (int i = 1; i <= noRow2; i++)
-                    {
-                        ws.Cells["A" + (i + noRow + 13)].Value = i;
-                    }
-
-                    // sum source 2
-                    ws.Cells[noRow + noRow2 + 14, 2].Value = "Tổng cộng";
-                    ws.Cells[noRow + noRow2 + 14, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                    ws.Row(noRow + noRow2 + 14).Style.Font.Bold = true;
-                    ws.Cells[noRow + noRow2 + 14, 3].Formula = "sum(c" + (14 + noRow) + ":c" + (noRow + noRow2 + 13) + ")";
-                    ws.Cells[noRow + noRow2 + 14, 5].Formula = "sum(e" + (14 + noRow) + ":e" + (noRow + noRow2 + 13) + ")";
-                    ws.Cells[noRow + noRow2 + 14, 6].Formula = "sum(F" + (14 + noRow) + ":F" + (noRow + noRow2 + 13) + ")";
-                    ws.Cells[noRow + noRow2 + 14, 7].Formula = "sum(G" + (14 + noRow) + ":G" + (noRow + noRow2 + 13) + ")";
-
+                    #region TCBC
                     if (noRow2 > 0)
-                    {                        
-                        ws.Cells[noRow + 14, 3, noRow + noRow2 + 14, 7].Style.Numberformat.Format = "#,##0.00";
+                    {
+                        // load data source 2
+                        ws.Cells["A" + (noRow + 13)].LoadFromCollection<T3>(datasource3, true, TableStyles.Light1);
+                        ws.Cells["A" + (noRow + 12) + ":I" + (noRow + 12)].Merge = true;
+                        ws.Cells["A" + (noRow + 12) + ":I" + (noRow + 12)].Value = "II. Nhóm Tài Chính Bưu Chính";
+                        ws.Cells["A" + (noRow + 12) + ":I" + (noRow + 12)].Style.Font.Bold = true;
+                        ws.Row(noRow + 12).Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+
+                        //header
+                        ws.Row(noRow + 13).Height = 30;
+                        ws.Cells["A" + (noRow + 13)].Value = "STT";
+                        ws.Cells["B" + (noRow + 13)].Value = "Dịch vụ";
+                        ws.Cells["C" + (noRow + 13)].Value = "Số \nlượng";
+                        ws.Cells["D" + (noRow + 13)].Value = "Thuế";
+                        ws.Cells["E" + (noRow + 13)].Value = "Số tiền \nkhách nhận";
+                        ws.Cells["F" + (noRow + 13)].Value = "Số tiền \nnhận của khách";
+                        ws.Cells["G" + (noRow + 13)].Value = "Doanh thu \ntính lương";
+                        ws.Cells["A" + (noRow + 13) + ":I" + (noRow + 13)].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        ws.Cells["A" + (noRow + 13) + ":I" + (noRow + 13)].Style.Font.Bold = true;
+                        ws.Cells[(noRow + 13), 1, (noRow + 13), 7].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        ws.Cells[(noRow + 13), 1, (noRow + 13), 7].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(236, 143, 50));
+                        ws.Row(noRow + 13).Style.WrapText = true;
+
+                        // fill STT
+                        for (int i = 1; i <= noRow2; i++)
+                        {
+                            ws.Cells["A" + (i + noRow + 13)].Value = i;
+                        }
+
+                        // sum source 2
+                        ws.Cells[noRow + noRow2  +14, 2].Value = "Tổng cộng";
+                        ws.Cells[noRow + noRow2  +14, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        ws.Row(noRow + noRow2  +14).Style.Font.Bold = true;
+                        ws.Cells[noRow + noRow2  +14, 3].Formula = "sum(c" + (14 + noRow) + ":c" + (noRow + noRow2 + 13) + ")";
+                        ws.Cells[noRow + noRow2  +14, 5].Formula = "sum(e" + (14 + noRow) + ":e" + (noRow + noRow2 + 13) + ")";
+                        ws.Cells[noRow + noRow2  +14, 6].Formula = "sum(F" + (14 + noRow) + ":F" + (noRow + noRow2 + 13) + ")";
+                        ws.Cells[noRow + noRow2  +14, 7].Formula = "sum(G" + (14 + noRow) + ":G" + (noRow + noRow2 + 13) + ")";
+                        ws.Cells[noRow + 14, 4, noRow + noRow2 + 14, 7].Style.Numberformat.Format = "#,##0.00";
                     }
+
+                    #endregion TCBC
+                    
+                    #region PPTT
+                    if (noRow3 > 0)
+                    {
+                        // load data source 2
+                        ws.Cells["A" + (noRow + noRow2 + 17)].LoadFromCollection<T2>(datasource2, true, TableStyles.Light1);
+                        ws.Cells["A" + (noRow + noRow2 + 16) + ":I" + (noRow + noRow2 + 16)].Merge = true;
+                        ws.Cells["A" + (noRow + noRow2 + 16) + ":I" + (noRow + noRow2 + 16)].Value = "III. Nhóm Phân Phối Truyền Thông";
+                        ws.Cells["A" + (noRow + noRow2 + 16) + ":I" + (noRow + noRow2 + 16)].Style.Font.Bold = true;
+                        ws.Row(noRow + noRow2 + 16).Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+
+                        //header
+                        ws.Row(noRow + noRow2 + 17).Height = 30;
+                        ws.Cells["A"+ (noRow + noRow2 + 17)].Value = "STT";
+                        ws.Cells["B"+ (noRow + noRow2 + 17)].Value = "Dịch vụ";
+                        ws.Cells["C"+ (noRow + noRow2 + 17)].Value = "Số \nlượng";
+                        ws.Cells["D"+ (noRow + noRow2 + 17)].Value = "Thuế";
+                        ws.Cells["E"+ (noRow + noRow2 + 17)].Value = "Tiền mặt";
+                        ws.Cells["F"+ (noRow + noRow2 + 17)].Value = "Vat \ntiền mặt";
+                        ws.Cells["G"+ (noRow + noRow2 + 17)].Value = "Tiền nợ";
+                        ws.Cells["H"+ (noRow + noRow2 + 17)].Value = "Vat \ntiền nợ";
+                        ws.Cells["I"+ (noRow + noRow2 + 17)].Value = "Doanh thu \ntính lương";
+                        ws.Cells["A" + (noRow + noRow2 + 17) + ":I" + (noRow + noRow2 + 17)].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        ws.Cells["A" + (noRow + noRow2 + 17) + ":I" + (noRow + noRow2 + 17)].Style.Font.Bold = true;
+                        ws.Cells[(noRow + noRow2 + 17), 1, (noRow + noRow2 + 17), 9].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        ws.Cells[(noRow + noRow2 + 17), 1, (noRow + noRow2 + 17), 9].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(236, 143, 50));
+                        ws.Row(noRow + noRow2 + 17).Style.WrapText = true;
+
+                        // fill STT
+                        for (int i = 1; i <= noRow3; i++)
+                        {
+                            ws.Cells["A" + (i + noRow + noRow2 + 17)].Value = i;
+                        }
+
+                        // sum source 2
+                        ws.Cells[noRow + noRow2 + noRow3 +18, 2].Value = "Tổng cộng";
+                        ws.Cells[noRow + noRow2 + noRow3 +18, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        ws.Row(noRow + noRow2 + noRow3 +18).Style.Font.Bold = true;
+                        ws.Cells[noRow + noRow2 + noRow3 +18, 3].Formula = "sum(c" + (18 + noRow + noRow2) + ":c" + (noRow + noRow2 + noRow3 + 17) + ")";
+                        ws.Cells[noRow + noRow2 + noRow3 +18, 5].Formula = "sum(e" + (18 + noRow + noRow2) + ":e" + (noRow + noRow2 + noRow3 + 17) + ")";
+                        ws.Cells[noRow + noRow2 + noRow3 +18, 6].Formula = "sum(F" + (18 + noRow + noRow2) + ":F" + (noRow + noRow2 + noRow3 + 17) + ")";
+                        ws.Cells[noRow + noRow2 + noRow3 +18, 7].Formula = "sum(G" + (18 + noRow + noRow2) + ":G" + (noRow + noRow2 + noRow3 + 17) + ")";
+                        ws.Cells[noRow + noRow2 + noRow3 + 18, 8].Formula = "sum(H" + (18 + noRow + noRow2) + ":H" + (noRow + noRow2 + noRow3 + 17) + ")";
+                        ws.Cells[noRow + noRow2 + noRow3 + 18, 9].Formula = "sum(I" + (18 + noRow + noRow2) + ":I" + (noRow + noRow2 + noRow3 + 17) + ")";
+                        ws.Cells[noRow + noRow2 + 18, 3, noRow + noRow2 + noRow3 +18, 9].Style.Numberformat.Format = "#,##0.00";
+                    }
+
+                    #endregion PPTT
 
                     #region Function Info
 
@@ -526,26 +571,26 @@ namespace PostOffice.Common
 
                     #region Signal
                     //signal
-                    ws.Cells[noRow + noRow2 + 17, 1, noRow + noRow2 + 17, 2].Merge = true;
-                    ws.Cells[noRow + noRow2 + 17, 1, noRow + noRow2 + 17, 2].Value = "Người lập bảng";
-                    ws.Cells[noRow + noRow2 + 17, 1, noRow + noRow2 + 17, 2].Style.Font.Bold = true;
-                    ws.Cells[noRow + noRow2 + 17, 1, noRow + noRow2 + 17, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    ws.Cells[noRow + noRow2 + 23, 1, noRow + noRow2 + 23, 2].Merge = true;
+                    ws.Cells[noRow + noRow2 + 23, 1, noRow + noRow2 + 23, 2].Value = "Người lập bảng";
+                    ws.Cells[noRow + noRow2 + 23, 1, noRow + noRow2 + 23, 2].Style.Font.Bold = true;
+                    ws.Cells[noRow + noRow2 + 23, 1, noRow + noRow2 + 23, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
-                    ws.Cells[noRow + noRow2 + 21, 1, noRow + noRow2 + 21, 2].Merge = true;
-                    ws.Cells[noRow + noRow2 + 21, 1, noRow + noRow2 + 21, 2].Value = vm.CreatedBy;
-                    ws.Cells[noRow + noRow2 + 21, 1, noRow + noRow2 + 21, 2].Style.Font.Bold = true;
-                    ws.Cells[noRow + noRow2 + 21, 1, noRow + noRow2 + 21, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    ws.Cells[noRow + noRow2 + 26, 1, noRow + noRow2 + 26, 2].Merge = true;
+                    ws.Cells[noRow + noRow2 + 26, 1, noRow + noRow2 + 26, 2].Value = vm.CreatedBy;
+                    ws.Cells[noRow + noRow2 + 26, 1, noRow + noRow2 + 26, 2].Style.Font.Bold = true;
+                    ws.Cells[noRow + noRow2 + 26, 1, noRow + noRow2 + 26, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
-                    ws.Cells[noRow + noRow2 + 17, 7, noRow + noRow2 + 17, 9].Merge = true;
-                    ws.Cells[noRow + noRow2 + 17, 7, noRow + noRow2 + 17, 9].Value = "Người phê duyệt";
-                    ws.Cells[noRow + noRow2 + 17, 7, noRow + noRow2 + 17, 9].Style.Font.Bold = true;
-                    ws.Cells[noRow + noRow2 + 17, 7, noRow + noRow2 + 17, 9].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    ws.Cells[noRow + noRow2 + 23, 7, noRow + noRow2 + 23, 9].Merge = true;
+                    ws.Cells[noRow + noRow2 + 23, 7, noRow + noRow2 + 23, 9].Value = "Người phê duyệt";
+                    ws.Cells[noRow + noRow2 + 23, 7, noRow + noRow2 + 23, 9].Style.Font.Bold = true;
+                    ws.Cells[noRow + noRow2 + 23, 7, noRow + noRow2 + 23, 9].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
-                    ws.Cells[noRow + noRow2 + 22, 3, noRow + noRow2 + 22, 9].Merge = true;
-                    ws.Cells[noRow + noRow2 + 22, 3, noRow + noRow2 + 22, 9].Value = DateTime.Now;
-                    ws.Cells[noRow + noRow2 + 22, 3, noRow + noRow2 + 22, 9].Style.Numberformat.Format = "dd/MM/yyyy HH:mm:ss";
-                    ws.Cells[noRow + noRow2 + 22, 3, noRow + noRow2 + 22, 9].Style.Font.Italic = true;
-                    ws.Cells[noRow + noRow2 + 22, 3, noRow + noRow2 + 22, 9].Style.Font.Size = 10;
+                    ws.Cells[noRow + noRow2 + 27, 3, noRow + noRow2 + 27, 9].Merge = true;
+                    ws.Cells[noRow + noRow2 + 27, 3, noRow + noRow2 + 27, 9].Value = DateTime.Now;
+                    ws.Cells[noRow + noRow2 + 27, 3, noRow + noRow2 + 27, 9].Style.Numberformat.Format = "dd/MM/yyyy HH:mm:ss";
+                    ws.Cells[noRow + noRow2 + 27, 3, noRow + noRow2 + 27, 9].Style.Font.Italic = true;
+                    ws.Cells[noRow + noRow2 + 27, 3, noRow + noRow2 + 27, 9].Style.Font.Size = 10;
                     #endregion Signal
 
                     pck.Save();

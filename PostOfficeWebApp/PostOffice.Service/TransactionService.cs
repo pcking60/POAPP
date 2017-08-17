@@ -35,6 +35,9 @@ namespace PostOffice.Service
 
         IEnumerable<Transaction> GetAllByMainGroupId(DateTime fromDate, DateTime toDate, int mainGroupId);
 
+        IEnumerable<Transaction> GetAllBy_Time_DistrictID_MainGroupId(DateTime fromDate, DateTime toDate, int districtId, int id);
+        IEnumerable<Transaction> GetAllBy_Time_DistrictID_POID_MainGroupId(DateTime fromDate, DateTime toDate, int districtId, int poId, int id);
+
         void Save();
     }
     public class TransactionService : ITransactionService
@@ -234,6 +237,16 @@ namespace PostOffice.Service
         public IEnumerable<Transaction> GetAllByMainGroupId(DateTime fromDate, DateTime toDate, int mainGroupId)
         {
             return _transactionRepository.GetAllByMainGroupId(fromDate, toDate, mainGroupId);
+        }
+
+        public IEnumerable<Transaction> GetAllBy_Time_DistrictID_MainGroupId(DateTime fromDate, DateTime toDate, int districtId, int id)
+        {
+            return _transactionRepository.GetAllBy_Time_DistrictID_MainGroupId(fromDate, toDate, districtId, id);
+        }
+
+        public IEnumerable<Transaction> GetAllBy_Time_DistrictID_POID_MainGroupId(DateTime fromDate, DateTime toDate, int districtId, int poId, int id)
+        {
+            return _transactionRepository.GetAllBy_Time_DistrictID_POID_MainGroupId(fromDate, toDate, districtId, poId, id);
         }
     }
 }

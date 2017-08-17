@@ -24,6 +24,9 @@ namespace PostOfiice.DAta.Repositories
 
         IEnumerable<Transaction> GetAllByTimeAndPOID(DateTime fromDate, DateTime toDate, int id);
 
+        IEnumerable<Transaction> GetAllBy_Time_DistrictID_MainGroupId(DateTime fromDate, DateTime toDate, int districtId, int id);
+        IEnumerable<Transaction> GetAllBy_Time_DistrictID_POID_MainGroupId(DateTime fromDate, DateTime toDate, int districtId, int poId, int id);
+
         IEnumerable<Transaction> GetAllByTimeAndPOID(DateTime fromDate, DateTime toDate, int id, string userId, int serviceId);
 
         IEnumerable<Transaction> GetAllByTimeAndPOID(DateTime fromDate, DateTime toDate, int id, string userId);
@@ -199,6 +202,42 @@ namespace PostOfiice.DAta.Repositories
                                   select ts;
 
             return listTransaction;
+        }
+
+        public IEnumerable<Transaction> GetAllBy_Time_DistrictID_MainGroupId(DateTime fromDate, DateTime toDate, int districtId, int id)
+        {
+            var query = from g in DbContext.ServiceGroups
+                        join mg in DbContext.MainServiceGroups
+                        on g.MainServiceGroupId equals mg.Id
+                        join s in DbContext.Services
+                        on g.ID equals s.GroupID
+                        join ts in DbContext.Transactions
+                        on s.ID equals ts.ServiceId
+                        join u in DbContext.Users
+                        on ts.UserId equals u.Id
+                        join p in DbContext.PostOffices
+                        on u.POID equals p.ID
+                        where p.DistrictID == districtId && mg.Id==id && (DbFunctions.TruncateTime(ts.TransactionDate) >= fromDate && DbFunctions.TruncateTime(ts.TransactionDate) <= toDate)
+                        select ts;
+            return query;
+        }
+
+        public IEnumerable<Transaction> GetAllBy_Time_DistrictID_POID_MainGroupId(DateTime fromDate, DateTime toDate, int districtId, int poId, int id)
+        {
+            var query = from g in DbContext.ServiceGroups
+                        join mg in DbContext.MainServiceGroups
+                        on g.MainServiceGroupId equals mg.Id
+                        join s in DbContext.Services
+                        on g.ID equals s.GroupID
+                        join ts in DbContext.Transactions
+                        on s.ID equals ts.ServiceId
+                        join u in DbContext.Users
+                        on ts.UserId equals u.Id
+                        join p in DbContext.PostOffices
+                        on u.POID equals p.ID
+                        where p.DistrictID == districtId && p.ID==poId && mg.Id == id && (DbFunctions.TruncateTime(ts.TransactionDate) >= fromDate && DbFunctions.TruncateTime(ts.TransactionDate) <= toDate)
+                        select ts;
+            return query;
         }
     }
 }
