@@ -137,7 +137,7 @@
                     toDate: toDate,
                     districtId: $scope.report.districtId || 0,
                     functionId: $scope.report.functionId || 0,
-                    unitId: $scope.report.unitId || 0,
+                    unitId: $scope.report.poId || 0,
                     userId: $scope.report.userId || '',
                     serviceId: $scope.report.serviceId || 0,
                 }
@@ -182,6 +182,7 @@
                     null,
                     function (response) {
                         $stateParams.id = response.data.POID;
+                        $scope.report.districtId = response.data.POID;
                         getPos();
                     },
                     function (response) {

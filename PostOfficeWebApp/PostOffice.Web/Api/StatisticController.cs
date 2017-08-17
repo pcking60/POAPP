@@ -159,6 +159,10 @@ namespace PostOffice.Web.Api
 
                     case 2:
                         vm.FunctionName = "Bảng kê thu tiền tại bưu cục - chi tiết";
+                        if (!isAdmin && !isManager)
+                        {
+                            break;
+                        }                        
                         if (isAdmin)
                         {
                             if (districtId == 0)
@@ -255,7 +259,7 @@ namespace PostOffice.Web.Api
                                     item.ServiceName = _serviceService.GetById(item.ServiceId).Name;
                                     item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
                                     var groupId = _serviceGroupService.GetSigleByServiceId(item.ID);
-                                    if (groupId != null && groupId.ID == 93)
+                                    if (groupId != null && (groupId.ID == 93 || groupId.ID == 75)) 
                                     {
                                         item.IsReceive = true;
                                         item.TotalMoneyReceive = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
@@ -271,7 +275,7 @@ namespace PostOffice.Web.Api
                                 #endregion TCBC
 
                                 await ReportHelper.RP2_1(responseDBGg1.ToList(), responseDBGg2.ToList(), responseDBGg3.ToList(), fullPath, vm);
-                            }
+                            }//end if districtId=0
                             else
                             {
                                 if (unitId == 0)
@@ -500,6 +504,228 @@ namespace PostOffice.Web.Api
                         }
                         else
                         {
+                            if (unitId == 0)
+                            {
+                                int Gg1 = 1;
+                                int Gg2 = 2;
+                                int Gg3 = 3;
+                                int Gg4 = 4;
+                                var modelGg1 = _trasactionService.GetAllBy_Time_DistrictID_MainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), districtId, Gg1);
+                                var modelGg2 = _trasactionService.GetAllBy_Time_DistrictID_MainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), districtId, Gg2);
+                                var modelGg3 = _trasactionService.GetAllBy_Time_DistrictID_MainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), districtId, Gg3);
+                                var modelGg4 = _trasactionService.GetAllBy_Time_DistrictID_MainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), districtId, Gg4);
+                                var responseGg1 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg1);
+                                var responseGg2 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg2);
+                                var responseGg3 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg3);
+                                var responseGg4 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg4);
+
+                                // main group 1 - BCCP
+
+                                #region BCCP
+
+                                foreach (var item in responseGg1)
+                                {
+                                    item.VAT = _serviceService.GetById(item.ServiceId).VAT;
+                                    item.Quantity = Convert.ToInt32(_transactionDetailService.GetAllByCondition("Sản lượng", item.ID).Money);
+                                    item.ServiceName = _serviceService.GetById(item.ServiceId).Name;
+                                    if (!item.IsCash)
+                                    {
+                                        item.TotalDebt = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                    else
+                                    {
+                                        item.TotalCash = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                    item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
+                                }
+                                var responseDBGg1 = Mapper.Map<IEnumerable<TransactionViewModel>, IEnumerable<MainGroup1>>(responseGg1);
+                                foreach (var item in responseDBGg1)
+                                {
+                                    if (item.TotalDebt > 0 && item.VAT > 0)
+                                    {
+                                        item.VatOfTotalDebt = item.TotalDebt - item.TotalDebt / Convert.ToDecimal(item.VAT);
+                                    }
+                                    if (item.TotalCash > 0 && item.VAT > 0)
+                                    {
+                                        item.VatOfTotalCash = item.TotalCash - item.TotalCash / Convert.ToDecimal(item.VAT);
+                                    }
+                                }
+
+                                #endregion BCCP
+
+                                // main group 2 - PPTT
+
+                                #region PPTT
+
+                                foreach (var item in responseGg2)
+                                {
+                                    item.VAT = _serviceService.GetById(item.ServiceId).VAT;
+                                    item.Quantity = Convert.ToInt32(_transactionDetailService.GetAllByCondition("Sản lượng", item.ID).Money);
+                                    item.ServiceName = _serviceService.GetById(item.ServiceId).Name;
+                                    if (!item.IsCash)
+                                    {
+                                        item.TotalDebt = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                    else
+                                    {
+                                        item.TotalCash = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                    item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
+                                }
+                                var responseDBGg2 = Mapper.Map<IEnumerable<TransactionViewModel>, IEnumerable<MainGroup1>>(responseGg2);
+                                foreach (var item in responseDBGg2)
+                                {
+                                    if (item.TotalDebt > 0 && item.VAT > 0)
+                                    {
+                                        item.VatOfTotalDebt = item.TotalDebt - item.TotalDebt / Convert.ToDecimal(item.VAT);
+                                    }
+                                    if (item.TotalCash > 0 && item.VAT > 0)
+                                    {
+                                        item.VatOfTotalCash = item.TotalCash - item.TotalCash / Convert.ToDecimal(item.VAT);
+                                    }
+                                }
+
+                                #endregion PPTT
+
+                                // main group 3 - TCBC
+
+                                #region TCBC
+
+                                foreach (var item in responseGg3)
+                                {
+                                    item.VAT = _serviceService.GetById(item.ServiceId).VAT;
+                                    item.Quantity = Convert.ToInt32(_transactionDetailService.GetAllByCondition("Sản lượng", item.ID).Money);
+                                    item.ServiceName = _serviceService.GetById(item.ServiceId).Name;
+                                    item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
+                                    var groupId = _serviceGroupService.GetSigleByServiceId(item.ID);
+                                    if (groupId != null && groupId.ID == 93)
+                                    {
+                                        item.IsReceive = true;
+                                        item.TotalMoneyReceive = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                    else
+                                    {
+                                        item.IsReceive = false;
+                                        item.TotalMoneySent = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                }
+                                var responseDBGg3 = Mapper.Map<IEnumerable<TransactionViewModel>, IEnumerable<MainGroup3>>(responseGg3);
+
+                                #endregion TCBC
+
+                                await ReportHelper.RP2_1(responseDBGg1.ToList(), responseDBGg2.ToList(), responseDBGg3.ToList(), fullPath, vm);
+                            }
+                            else
+                            {
+                                int Gg1 = 1;
+                                int Gg2 = 2;
+                                int Gg3 = 3;
+                                int Gg4 = 4;
+                                var modelGg1 = _trasactionService.GetAllBy_Time_DistrictID_POID_MainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), districtId, unitId, Gg1);
+                                var modelGg2 = _trasactionService.GetAllBy_Time_DistrictID_POID_MainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), districtId, unitId, Gg2);
+                                var modelGg3 = _trasactionService.GetAllBy_Time_DistrictID_POID_MainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), districtId, unitId, Gg3);
+                                var modelGg4 = _trasactionService.GetAllBy_Time_DistrictID_POID_MainGroupId(DateTime.Parse(fromDate), DateTime.Parse(toDate), districtId, unitId, Gg4);
+                                var responseGg1 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg1);
+                                var responseGg2 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg2);
+                                var responseGg3 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg3);
+                                var responseGg4 = Mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionViewModel>>(modelGg4);
+
+                                // main group 1 - BCCP
+
+                                #region BCCP
+
+                                foreach (var item in responseGg1)
+                                {
+                                    item.VAT = _serviceService.GetById(item.ServiceId).VAT;
+                                    item.Quantity = Convert.ToInt32(_transactionDetailService.GetAllByCondition("Sản lượng", item.ID).Money);
+                                    item.ServiceName = _serviceService.GetById(item.ServiceId).Name;
+                                    if (!item.IsCash)
+                                    {
+                                        item.TotalDebt = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                    else
+                                    {
+                                        item.TotalCash = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                    item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
+                                }
+                                var responseDBGg1 = Mapper.Map<IEnumerable<TransactionViewModel>, IEnumerable<MainGroup1>>(responseGg1);
+                                foreach (var item in responseDBGg1)
+                                {
+                                    if (item.TotalDebt > 0 && item.VAT > 0)
+                                    {
+                                        item.VatOfTotalDebt = item.TotalDebt - item.TotalDebt / Convert.ToDecimal(item.VAT);
+                                    }
+                                    if (item.TotalCash > 0 && item.VAT > 0)
+                                    {
+                                        item.VatOfTotalCash = item.TotalCash - item.TotalCash / Convert.ToDecimal(item.VAT);
+                                    }
+                                }
+
+                                #endregion BCCP
+
+                                // main group 2 - PPTT
+
+                                #region PPTT
+
+                                foreach (var item in responseGg2)
+                                {
+                                    item.VAT = _serviceService.GetById(item.ServiceId).VAT;
+                                    item.Quantity = Convert.ToInt32(_transactionDetailService.GetAllByCondition("Sản lượng", item.ID).Money);
+                                    item.ServiceName = _serviceService.GetById(item.ServiceId).Name;
+                                    if (!item.IsCash)
+                                    {
+                                        item.TotalDebt = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                    else
+                                    {
+                                        item.TotalCash = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                    item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
+                                }
+                                var responseDBGg2 = Mapper.Map<IEnumerable<TransactionViewModel>, IEnumerable<MainGroup1>>(responseGg2);
+                                foreach (var item in responseDBGg2)
+                                {
+                                    if (item.TotalDebt > 0 && item.VAT > 0)
+                                    {
+                                        item.VatOfTotalDebt = item.TotalDebt - item.TotalDebt / Convert.ToDecimal(item.VAT);
+                                    }
+                                    if (item.TotalCash > 0 && item.VAT > 0)
+                                    {
+                                        item.VatOfTotalCash = item.TotalCash - item.TotalCash / Convert.ToDecimal(item.VAT);
+                                    }
+                                }
+
+                                #endregion PPTT
+
+                                // main group 3 - TCBC
+
+                                #region TCBC
+
+                                foreach (var item in responseGg3)
+                                {
+                                    item.VAT = _serviceService.GetById(item.ServiceId).VAT;
+                                    item.Quantity = Convert.ToInt32(_transactionDetailService.GetAllByCondition("Sản lượng", item.ID).Money);
+                                    item.ServiceName = _serviceService.GetById(item.ServiceId).Name;
+                                    item.EarnMoney = _transactionDetailService.GetTotalEarnMoneyByTransactionId(item.ID);
+                                    var groupId = _serviceGroupService.GetSigleByServiceId(item.ID);
+                                    if (groupId != null && groupId.ID == 93)
+                                    {
+                                        item.IsReceive = true;
+                                        item.TotalMoneyReceive = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                    else
+                                    {
+                                        item.IsReceive = false;
+                                        item.TotalMoneySent = _transactionDetailService.GetTotalMoneyByTransactionId(item.ID);
+                                    }
+                                }
+                                var responseDBGg3 = Mapper.Map<IEnumerable<TransactionViewModel>, IEnumerable<MainGroup3>>(responseGg3);
+
+                                #endregion TCBC
+
+                                await ReportHelper.RP2_1(responseDBGg1.ToList(), responseDBGg2.ToList(), responseDBGg3.ToList(), fullPath, vm);
+                            }
                         }
 
                         break;

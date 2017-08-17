@@ -79,9 +79,6 @@
             );
         }   
 
-        $scope.isManager = authService.haveRole("Manager");
-        console.log($scope.isManager);
-
         // lấy danh sách người dùng
         $scope.getListUser = getListUser;
         function getListUser() {
