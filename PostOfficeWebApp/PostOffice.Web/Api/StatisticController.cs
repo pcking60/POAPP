@@ -74,7 +74,6 @@ namespace PostOffice.Web.Api
         public async Task<HttpResponseMessage> RP1(HttpRequestMessage request, string fromDate, string toDate, int districtId, int functionId, int unitId, string userId, int serviceId)
         {
             //check role
-
             bool isAdmin = false;
             bool isManager = false;
             isAdmin = _userService.CheckRole(User.Identity.Name, "Administrator");
@@ -94,67 +93,81 @@ namespace PostOffice.Web.Api
             #endregion Config Export file
 
             ReportTemplate vm = new ReportTemplate();
-            IEnumerable<RP1Advance> rp1Advance;
+            //IEnumerable<RP1Advance> rp1Advance;
 
             try
             {
                 #region customFill Test
-
-                // Thời gian để xuất dữ liệu
-                vm.FromDate = DateTime.Parse(fromDate);
-                vm.ToDate = DateTime.Parse(toDate);
 
                 District district = new District();
                 PO po = new PO();
                 ApplicationUser user = new ApplicationUser();
                 Model.Models.Service sv = new Model.Models.Service();
 
-                rp1Advance = _statisticService.RP1Advance();
+                // Thời gian để xuất dữ liệu
+                vm.FromDate = DateTime.Parse(fromDate);
+                vm.ToDate = DateTime.Parse(toDate);
+                vm.CreatedBy = User.Identity.Name;
+
+                //rp1Advance = _statisticService.RP1Advance();
 
                 //check param đầu vào
-
                 if (districtId != 0)
                 {
                     district = _districtService.GetById(districtId);
+                    vm.District = district.Name;
                 }
                 if (unitId != 0)
                 {
                     po = _poService.GetByID(unitId);
+                    vm.Unit = po.Name;
                 }
                 if (!string.IsNullOrEmpty(userId))
                 {
                     user = _userService.getByUserId(userId);
+                    vm.user = user.FullName;
                 }
                 if (serviceId != 0)
                 {
                     sv = _serviceService.GetById(serviceId);
-                }
-
-                if (district != null)
-                {
-                    vm.District = district.Name;
-                }
-                if (po != null)
-                {
-                    vm.Unit = po.Name;
-                }
-                if (user != null)
-                {
-                    vm.user = user.FullName;
-                }
-                if (sv != null)
-                {
                     vm.Service = sv.Name;
-                }
-                vm.CreatedBy = User.Identity.Name;
-
+                }                
+                
                 var listMainGroup = _mainGroupService.GetAll();
 
                 switch (functionId)
                 {
                     case 1:
                         vm.FunctionName = "Bảng kê thu tiền tại bưu cục - tổng hợp";
+                        if (isAdmin)
+                        {
+                            if (districtId == 0)
+                            {
 
+                            }
+                            else // districtId != 0
+                            {
+                                if (unitId == 0)
+                                {
+
+                                }
+                                else //unitId != 0
+                                {
+
+                                }
+                            }
+                        }
+                        else // !isAdmin
+                        {
+                            if (unitId == 0)
+                            {
+
+                            }
+                            else
+                            {
+
+                            }
+                        }
                         break;
 
                     case 2:
