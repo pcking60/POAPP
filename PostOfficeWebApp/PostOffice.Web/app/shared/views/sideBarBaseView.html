@@ -148,7 +148,7 @@
                         <span>Thống kê tổng hợp</span>
                     </a>
                 </li>
-                <li>
+                <li  ng-controller="rootController" ng-hide="!isAdmin && !isManager">
                     <a ui-sref="reports">
                         <i class="fa fa-angle-double-right text-aqua"></i>
                         <span>Xuất báo cáo</span>
