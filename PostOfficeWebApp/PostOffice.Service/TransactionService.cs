@@ -115,7 +115,7 @@ namespace PostOffice.Service
                 }
                 else
                 {
-                    return _transactionRepository.GetMulti(x => x.UserId == user.Id).ToList();
+                    return _transactionRepository.GetMulti(x => x.UserId == user.Id && x.Status == true).ToList();
                 }
             }
             

@@ -64,7 +64,7 @@ namespace PostOfiice.DAta.Repositories
             var listTransaction = from u in this.DbContext.Users
                                   join ts in this.DbContext.Transactions
                                   on u.Id equals ts.UserId
-                                  where u.POID == p
+                                  where u.POID == p && ts.Status==true
                                   select ts;
 
             return listTransaction;
@@ -239,5 +239,6 @@ namespace PostOfiice.DAta.Repositories
                         select ts;
             return query;
         }
+        
     }
 }

@@ -12,7 +12,7 @@ namespace PostOfiice.DAta.Repositories
 
     public class TKBDHistoryRepository : RepositoryBase<TKBDHistory>, ITKBDHistoryRepository
     {
-        private IEnumerable<TKBDHistory> listTKBDHistories;
+        
         public TKBDHistoryRepository(IDbFactory dbFactory) : base(dbFactory)
         {
         }

@@ -131,7 +131,7 @@
                             $scope.report.totalCash += item.TotalCash;
                             $scope.report.totalDebt += item.TotalDebt;
                             $scope.report.totalEarn += item.EarnMoney;
-                            $scope.report.totalVat += (item.TotalMoney * item.VAT / 100);
+                            $scope.report.totalVat += ((item.TotalMoney + item.TotalCash + item.TotalDebt) * item.VAT / 100);
                         }                        
                     })
                     $scope.result = true;
