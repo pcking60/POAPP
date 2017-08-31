@@ -2,6 +2,7 @@
 using PostOfiice.DAta.Repositories;
 using System.Collections.Generic;
 using System;
+using PostOffice.Common.ViewModels.ExportModel;
 
 namespace PostOffice.Service
 {
@@ -14,17 +15,22 @@ namespace PostOffice.Service
         IEnumerable<ReportFunction1> ReportFunction1(string fromDate, string toDate, int districtId, int unitId);
         IEnumerable<ReportFunction1> RP1(string fromDate, string toDate, int districtId, int unitId);
         IEnumerable<RP1Advance> RP1Advance();
+        IEnumerable<Export_By_Service_Group_And_Time> Export_By_Service_Group_And_Time(string fromDate, string toDate, int mainGroup, int districtId, int poId, string currentUser);
     }
 
     public class StatisticService : IStatisticService
     {
         private ITransactionRepository _transactionRepository;
         private IStatisticRepository _statisticRepository;
+        private IApplicationUserRepository _userRepository;
+        private IPORepository _poRepository;
 
-        public StatisticService(ITransactionRepository transactionRepository, IStatisticRepository statisticRepository)
+        public StatisticService(IPORepository poRepository, ITransactionRepository transactionRepository, IStatisticRepository statisticRepository, IApplicationUserRepository userRepository)
         {
             _transactionRepository = transactionRepository;
             _statisticRepository = statisticRepository;
+            _userRepository = userRepository;
+            _poRepository = poRepository;
         }
 
         public IEnumerable<RevenueStatisticViewModel> GetRevenueStatistic(string fromDate, string toDate)
@@ -57,6 +63,59 @@ namespace PostOffice.Service
         public IEnumerable<RP1Advance> RP1Advance() 
         {
             return _statisticRepository.RP1Advance();
+        }
+
+        public IEnumerable<Export_By_Service_Group_And_Time> Export_By_Service_Group_And_Time(string fromDate, string toDate, int mainGroup, int districtId, int poId, string currentUser)
+        {
+
+            bool isAdmin = _userRepository.CheckRole(currentUser, "Administrator");
+            bool isManager = _userRepository.CheckRole(currentUser, "Manager");
+
+            var user = _userRepository.getByUserName(currentUser);
+            string userId = null;
+            if(user!=null)
+            {
+                userId = user.Id;
+            }
+
+            if (isAdmin)
+            {
+                if (districtId == 0)
+                {
+                    return _statisticRepository.Export_By_Service_Group_And_Time(fromDate, toDate, mainGroup);
+                }
+                else
+                {
+                    if (poId == 0)
+                    {
+                        return _statisticRepository.Export_By_Service_Group_And_Time_District(fromDate, toDate, mainGroup, districtId);
+                    }
+                    else
+                    {
+                        return _statisticRepository.Export_By_Service_Group_And_Time_District_Po(fromDate, toDate, mainGroup, districtId, poId);
+                    }
+                }
+                
+            }
+            else
+            {
+                if (isManager)
+                {
+                    if (poId == 0)
+                    {
+                        return _statisticRepository.Export_By_Service_Group_And_Time_District(fromDate, toDate, mainGroup, districtId);
+                    }
+                    else
+                    {
+                        return _statisticRepository.Export_By_Service_Group_And_Time_District_Po(fromDate, toDate, mainGroup, districtId, poId);
+                    }
+                }
+                else
+                {
+                    return _statisticRepository.Export_By_Service_Group_And_Time_User(fromDate, toDate, mainGroup, userId);
+                }
+            }
+            
         }
     }
 }

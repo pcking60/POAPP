@@ -6,6 +6,7 @@ using System;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Globalization;
+using PostOffice.Common.ViewModels.ExportModel;
 
 namespace PostOfiice.DAta.Repositories
 {
@@ -17,6 +18,11 @@ namespace PostOfiice.DAta.Repositories
         IEnumerable<ReportFunction1> ReportFunction1(string fromDate, string toDate, int districtId, int unitId);
         IEnumerable<ReportFunction1> RP1(string fromDate, string toDate, int districtId, int unitId);
         IEnumerable<RP1Advance> RP1Advance();
+        IEnumerable<Export_By_Service_Group_And_Time> Export_By_Service_Group_And_Time(string fromDate, string toDate, int mainGroup);
+        IEnumerable<Export_By_Service_Group_And_Time> Export_By_Service_Group_And_Time_Manager(string fromDate, string toDate, int mainGroup, int poId);
+        IEnumerable<Export_By_Service_Group_And_Time> Export_By_Service_Group_And_Time_User(string fromDate, string toDate, int mainGroup, string userId);
+        IEnumerable<Export_By_Service_Group_And_Time> Export_By_Service_Group_And_Time_District(string fromDate, string toDate, int mainGroup, int districtId);
+        IEnumerable<Export_By_Service_Group_And_Time> Export_By_Service_Group_And_Time_District_Po(string fromDate, string toDate, int mainGroup, int districtId, int poId);
         IEnumerable<RP2_1> RP2_1();
     }
 
@@ -24,6 +30,61 @@ namespace PostOfiice.DAta.Repositories
     {
         public StatisticRepository(IDbFactory dbFactory) : base(dbFactory)
         {
+        }
+
+        public IEnumerable<Export_By_Service_Group_And_Time> Export_By_Service_Group_And_Time(string fromDate, string toDate, int mainGroup)
+        {
+            var parameters = new SqlParameter[] {
+                new SqlParameter("@fromDate", fromDate),
+                new SqlParameter("@toDate", toDate),
+                new SqlParameter("@mainGroup", mainGroup)
+            };
+            return DbContext.Database.SqlQuery<Export_By_Service_Group_And_Time>("Export_By_Service_Group_And_Time @fromDate,@toDate,@mainGroup", parameters);
+        }
+
+        public IEnumerable<Export_By_Service_Group_And_Time> Export_By_Service_Group_And_Time_District(string fromDate, string toDate, int mainGroup, int districtId)
+        {
+            var parameters = new SqlParameter[] {
+                new SqlParameter("@fromDate", fromDate),
+                new SqlParameter("@toDate", toDate),
+                new SqlParameter("@mainGroup", mainGroup),
+                new SqlParameter("@districtId", districtId)
+            };
+            return DbContext.Database.SqlQuery<Export_By_Service_Group_And_Time>("Export_By_Service_Group_And_Time_District @fromDate,@toDate,@mainGroup,@districtId", parameters);
+        }
+
+        public IEnumerable<Export_By_Service_Group_And_Time> Export_By_Service_Group_And_Time_District_Po(string fromDate, string toDate, int mainGroup, int districtId, int poId)
+        {
+            var parameters = new SqlParameter[] {
+                new SqlParameter("@fromDate", fromDate),
+                new SqlParameter("@toDate", toDate),
+                new SqlParameter("@mainGroup", mainGroup),
+                new SqlParameter("@districtId", districtId),
+                new SqlParameter("@poId", poId)
+            };
+            return DbContext.Database.SqlQuery<Export_By_Service_Group_And_Time>("Export_By_Service_Group_And_Time_District_Po @fromDate,@toDate,@mainGroup,@districtId,@poId", parameters);
+        }
+
+        public IEnumerable<Export_By_Service_Group_And_Time> Export_By_Service_Group_And_Time_Manager(string fromDate, string toDate, int mainGroup, int poId)
+        {
+            var parameters = new SqlParameter[] {
+                new SqlParameter("@fromDate", fromDate),
+                new SqlParameter("@toDate", toDate),
+                new SqlParameter("@mainGroup", mainGroup),
+                new SqlParameter("@poId", poId)
+            };
+            return DbContext.Database.SqlQuery<Export_By_Service_Group_And_Time>("Export_By_Service_Group_And_Time_Manager @fromDate,@toDate,@mainGroup,@poId", parameters);
+        }
+
+        public IEnumerable<Export_By_Service_Group_And_Time> Export_By_Service_Group_And_Time_User(string fromDate, string toDate, int mainGroup, string userId)
+        {
+            var parameters = new SqlParameter[] {
+                new SqlParameter("@fromDate", fromDate),
+                new SqlParameter("@toDate", toDate),
+                new SqlParameter("@mainGroup", mainGroup),
+                new SqlParameter("@userId", userId)
+            };
+            return DbContext.Database.SqlQuery<Export_By_Service_Group_And_Time>("Export_By_Service_Group_And_Time_User @fromDate,@toDate,@mainGroup,@userId", parameters);
         }
 
         public IEnumerable<UnitStatisticViewModel> GetUnitStatistic(string fromDate, string toDate)

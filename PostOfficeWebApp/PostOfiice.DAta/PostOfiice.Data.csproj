@@ -143,6 +143,26 @@
     <Compile Include="Migrations\201707050924225_UpdateTableTKBDHistory.Designer.cs">
       <DependentUpon>201707050924225_UpdateTableTKBDHistory.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201708300258469_create function Export by Service Group and Time.cs" />
+    <Compile Include="Migrations\201708300258469_create function Export by Service Group and Time.Designer.cs">
+      <DependentUpon>201708300258469_create function Export by Service Group and Time.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201708300340184_Export By Service Group_Time_Manager.cs" />
+    <Compile Include="Migrations\201708300340184_Export By Service Group_Time_Manager.Designer.cs">
+      <DependentUpon>201708300340184_Export By Service Group_Time_Manager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201708300344563_Export_service_group_time_user.cs" />
+    <Compile Include="Migrations\201708300344563_Export_service_group_time_user.Designer.cs">
+      <DependentUpon>201708300344563_Export_service_group_time_user.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201708300730317_Export_service_group_by_time_district.cs" />
+    <Compile Include="Migrations\201708300730317_Export_service_group_by_time_district.Designer.cs">
+      <DependentUpon>201708300730317_Export_service_group_by_time_district.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201708300737316_Export_By_Service_Group_And_Time_District_Po.cs" />
+    <Compile Include="Migrations\201708300737316_Export_By_Service_Group_And_Time_District_Po.Designer.cs">
+      <DependentUpon>201708300737316_Export_By_Service_Group_And_Time_District_Po.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="PostOfficeDbContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -217,6 +237,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201707050924225_UpdateTableTKBDHistory.resx">
       <DependentUpon>201707050924225_UpdateTableTKBDHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201708300258469_create function Export by Service Group and Time.resx">
+      <DependentUpon>201708300258469_create function Export by Service Group and Time.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201708300340184_Export By Service Group_Time_Manager.resx">
+      <DependentUpon>201708300340184_Export By Service Group_Time_Manager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201708300344563_Export_service_group_time_user.resx">
+      <DependentUpon>201708300344563_Export_service_group_time_user.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201708300730317_Export_service_group_by_time_district.resx">
+      <DependentUpon>201708300730317_Export_service_group_by_time_district.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201708300737316_Export_By_Service_Group_And_Time_District_Po.resx">
+      <DependentUpon>201708300737316_Export_By_Service_Group_And_Time_District_Po.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

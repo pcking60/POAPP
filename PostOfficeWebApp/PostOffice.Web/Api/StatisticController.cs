@@ -139,35 +139,34 @@ namespace PostOffice.Web.Api
                 {
                     case 1:
                         vm.FunctionName = "Bảng kê thu tiền tại bưu cục - tổng hợp";
-                        if (isAdmin)
+                      
+                        if (districtId == 0)
                         {
-                            if (districtId == 0)
-                            {
 
-                            }
-                            else // districtId != 0
-                            {
-                                if (unitId == 0)
-                                {
-
-                                }
-                                else //unitId != 0
-                                {
-
-                                }
-                            }
                         }
-                        else // !isAdmin
+                        else // districtId != 0
                         {
                             if (unitId == 0)
                             {
 
                             }
-                            else
+                            else //unitId != 0
                             {
+                                int Gg1 = 1; //BCCP
+                                int Gg2 = 2; //PPTT
+                                int Gg3 = 3; //TCBC
+                                int Gg4 = 4; //OTHER
 
+                                var currentUser = User.Identity.Name;
+                                var responseDBGg1 = _statisticService.Export_By_Service_Group_And_Time(fromDate, toDate, Gg1,districtId, unitId, currentUser);
+                                var responseDBGg2 = _statisticService.Export_By_Service_Group_And_Time(fromDate, toDate, Gg2, districtId, unitId, currentUser);
+                                var responseDBGg3 = _statisticService.Export_By_Service_Group_And_Time(fromDate, toDate, Gg3, districtId, unitId, currentUser);
+                                var responseDBGg4 = _statisticService.Export_By_Service_Group_And_Time(fromDate, toDate, Gg4, districtId, unitId, currentUser);
+                                await ReportHelper.RP2_1(responseDBGg1.ToList(), responseDBGg2.ToList(), responseDBGg3.ToList(), fullPath, vm);
                             }
                         }
+                       
+                        
                         break;
 
                     case 2:

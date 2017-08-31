@@ -306,7 +306,129 @@ namespace PostOffice.Common
             });
         }
 
+        /*
+            code: RP2_1
+            name: Bảng kê thu tiền tại bưu cục - tổng hợp
+        */
+        public static Task Export_By_Service_Group_And_Time<T1, T2, T3>(List<T1> datasource1, List<T2> datasource2, List<T3> datasource3, string filePath, ReportTemplate vm)
+        {
+            return Task.Run(() =>
+            {
+                using (ExcelPackage pck = new ExcelPackage(new FileInfo(filePath)))
+                {
+                    ExcelWorksheet ws = pck.Workbook.Worksheets.Add("Thống kê tổng hợp");
+                    
+                    #region templateInfo
 
+                    // all
+                    ws.Cells["A1:Z1000"].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                    //header
+                    ws.Cells["A1:I1"].Merge = true;
+                    ws.Cells["A1:I1"].Value = "TỔNG CÔNG TY BƯU ĐIỆN VIỆT NAM \n BƯU ĐIỆN TỈNH SÓC TRĂNG";
+                    ws.Row(1).Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    ws.Row(1).Height = 45;
+                    ws.Row(1).Style.Font.Bold = true;
+                    ws.Row(1).Style.Font.Size = 15;
+                    //functionName
+                    ws.Cells["A1:I1"].Style.WrapText = true;
+                    ws.Cells["A3:I3"].Merge = true;
+                    ws.Cells["A3:I3"].Formula = "upper(\"" + vm.FunctionName.ToString() + "\")";
+                    ws.Row(3).Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    ws.Row(3).Style.Font.Size = 13;
+                    ws.Row(3).Style.Font.Bold = true;
+                   
+                    // fill district
+                    ws.Cells["C4:I4"].Merge = true;
+                    ws.Cells["C4:I4"].Style.Font.Bold = true;
+                    ws.Cells["C4:I4"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+                    ws.Cells["C4:I4"].Style.Indent = 2;
+                    if (vm.District == null)
+                    {
+                        vm.District = "Tất cả";
+                    }
+                    ws.Cells["C4:I4"].Value = vm.District;
+
+                    // fill unit
+                    ws.Cells["C5:I5"].Merge = true;
+                    ws.Cells["C5:I5"].Style.Font.Bold = true;
+                    ws.Cells["C5:I5"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+                    ws.Cells["C5:I5"].Style.Indent = 2;
+                    if (vm.Unit == null)
+                    {
+                        vm.Unit = "Tất cả";
+                    }
+                    ws.Cells["C5:I5"].Value = vm.Unit;
+
+                    // fill time
+                    ws.Cells["C6:I6"].Merge = true;
+                    ws.Cells["C6:I6"].Style.Font.Bold = true;
+                    ws.Cells["C6:I6"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+                    ws.Cells["C6:I6"].Style.Indent = 2;
+                    ws.Cells["C6:I6"].Value = "Từ " + vm.FromDate.ToString("dd/MM/yyyy") + " đến " + vm.ToDate.ToString("dd/MM/yyyy");
+
+                    #endregion template info
+
+                    #region count data                    
+                    int noRow = datasource1.Count; //count number rows BCCP                    
+                    int noRow3 = datasource2.Count; // count row of PPTT                   
+                    int noRow2 = datasource3.Count;  // count row of TCBC
+                    //int noRow4 = datasource4.Count; // count row of OTHER
+                    #endregion count data
+
+                    #region BCCP                    
+                    if (noRow > 0)
+                    {
+                        //load data source 1 BCCP start A9
+                        ws.Cells["A9"].LoadFromCollection<T1>(datasource1, true, TableStyles.Light1);
+                        //fill STT
+                        for (int i = 1; i <= noRow; i++)
+                        {
+                            ws.Cells["A" + (i + 9)].Value = i;
+                        }
+
+                        //format col 1
+                        ws.Column(1).Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        //Header Label BCCP
+                        ws.Cells["A8:I8"].Merge = true;
+                        ws.Cells["A8:I8"].Value = "I. Nhóm Bưu Chính Chuyển Phát";
+                        ws.Cells["A8:I8"].Style.Font.Bold = true;
+                        ws.Row(8).Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+
+                        //header
+                        ws.Row(9).Height = 30;
+                        ws.Cells["A9"].Value = "STT";
+                        ws.Cells["B9"].Value = "Dịch vụ";
+                        ws.Cells["C9"].Value = "Sản \nlượng";
+                        ws.Cells["D9"].Value = "Tiền Thuế";
+                        ws.Cells["E9"].Value = "Vat \ntiền mặt";
+                        ws.Cells["F9"].Value = "Tiền nợ";
+                        ws.Cells["G9"].Value = "Vat \ntiền nợ";
+                        ws.Cells["H9"].Value = "DTTL";
+
+                        ws.Cells["A9:I9"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        ws.Cells["A9:I9"].Style.Font.Bold = true;
+                        ws.Cells[9, 1, 9, 9].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        ws.Cells[9, 1, 9, 9].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(236, 143, 50));
+
+                        ws.Cells.AutoFitColumns();
+                        ws.Row(9).Style.WrapText = true;
+
+                        ws.Cells["d10:I" + (noRow + 10)].Style.Numberformat.Format = "#,##0.00";
+
+                        //sum group 1
+                        ws.Cells[noRow + 10, 2].Value = "Tổng cộng";
+                        ws.Cells[noRow + 10, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        ws.Row(noRow + 10).Style.Font.Bold = true;
+                        ws.Cells[noRow + 10, 3].Formula = "sum(c10:c" + (noRow + 9) + ")";
+                        ws.Cells[noRow + 10, 5].Formula = "sum(e10:e" + (noRow + 9) + ")";
+                        ws.Cells[noRow + 10, 6].Formula = "sum(F10:F" + (noRow + 9) + ")";
+                        ws.Cells[noRow + 10, 7].Formula = "sum(G10:G" + (noRow + 9) + ")";
+                        ws.Cells[noRow + 10, 8].Formula = "sum(H10:H" + (noRow + 9) + ")";
+                        ws.Cells[noRow + 10, 9].Formula = "sum(I10:I" + (noRow + 9) + ")";
+                    }
+                }
+            });
+        }
         /*
             code: RP2_1
             name: Bảng kê thu tiền tại bưu cục - chi tiết
@@ -371,16 +493,18 @@ namespace PostOffice.Common
                     ws.Cells["C6:I6"].Style.Font.Bold = true;
                     ws.Cells["C6:I6"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
                     ws.Cells["C6:I6"].Style.Indent = 2;
-                    ws.Cells["C6:I6"].Value = "Từ " + vm.FromDate.ToString("dd/MM/yyyy") + " đến " + vm.ToDate.ToString("dd/MM/yyyy"); ;
+                    ws.Cells["C6:I6"].Value = "Từ " + vm.FromDate.ToString("dd/MM/yyyy") + " đến " + vm.ToDate.ToString("dd/MM/yyyy");
 
                     #endregion templateInfo
-                                        
+
+                    #region count data                    
                     //count number rows BCCP
                     int noRow = datasource1.Count;
                     // count row of TCBC
                     int noRow2 = datasource3.Count;
                     // count row of PPTT
                     int noRow3 = datasource2.Count;
+                    #endregion count data
 
                     #region BCCP
                     //format number
@@ -552,6 +676,7 @@ namespace PostOffice.Common
 
                     #endregion
 
+                    #region fix width
                     //fix width
                     ws.Column(1).Width = 5;
                     ws.Column(2).Width = 40;
@@ -563,6 +688,7 @@ namespace PostOffice.Common
                     ws.Column(8).Width = 12;
                     ws.Column(9).Width = 20;
 
+                    #endregion fix width
                     //border table
                     //ws.Cells[8, 1, noRow + 15, 9].Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
                     //ws.Cells[8, 1, noRow + 15, 9].Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
